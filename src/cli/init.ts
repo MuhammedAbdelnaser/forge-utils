@@ -21,7 +21,7 @@ export async function init(options: InitOptions): Promise<void> {
     }
     
     const config = {
-      $schema: "https://forge-utils.dev/schema.json",
+      // $schema: "https://forge-utils.dev/schema.json",
       typescript: options.typescript || false,
       directory: options.directory || 'lib/utils',
       utilities: [],

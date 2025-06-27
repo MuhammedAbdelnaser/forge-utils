@@ -1,0 +1,1 @@
+export { dataURItoFile } from '../utils/file-handling/dataURItoFile';

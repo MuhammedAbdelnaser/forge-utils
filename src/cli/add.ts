@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
+import * as ts from 'typescript';
 import { loadRegistry, findUtility, UtilityMeta, searchUtilities } from './registry';
 
 interface AddOptions {
@@ -92,9 +93,6 @@ export async function add(utilityNames: string[], options: AddOptions = {}) {
   }
 }
 
-/**
- * Resolves all dependencies for the given utilities
- */
 async function resolveDependencies(
   registry: any, 
   utilityNames: string[], 
@@ -147,9 +145,6 @@ async function resolveDependencies(
   };
 }
 
-/**
- * Performs topological sort to determine correct installation order
- */
 function topologicalSort(registry: any, utilities: string[]): string[] {
   const visited = new Set<string>();
   const visiting = new Set<string>();
@@ -189,9 +184,6 @@ function topologicalSort(registry: any, utilities: string[]): string[] {
   return result;
 }
 
-/**
- * Validate utilities and provide suggestions
- */
 async function validateUtilities(registry: any, utilityNames: string[]): Promise<{
   valid: string[];
   invalid: string[];
@@ -208,7 +200,6 @@ async function validateUtilities(registry: any, utilityNames: string[]): Promise
     } else {
       invalid.push(name);
       
-
       const similar = searchUtilities(registry, name, { limit: 3 });
       suggestions.push(...similar);
     }
@@ -221,9 +212,99 @@ async function validateUtilities(registry: any, utilityNames: string[]): Promise
   return { valid, invalid, suggestions: uniqueSuggestions };
 }
 
-/**
- * Get project configuration with backwards compatibility
- */
+async function installUtility(
+  utility: UtilityMeta, 
+  config: ProjectConfig, 
+  options: AddOptions
+): Promise<InstallationResult> {
+  try {
+  
+    let fileName: string;
+    
+    if (config.typescript) {
+      fileName = utility.file.replace(/\.(js|ts)$/, '.ts');
+    } else {
+      fileName = utility.file.replace(/\.(js|ts)$/, '.js');
+    }
+    
+    const targetFile = path.join(config.rootPath, config.directory, fileName);
+
+  
+    if (await fs.pathExists(targetFile)) {
+      if (!options.overwrite) {
+        return {
+          utility,
+          status: 'skipped',
+          path: targetFile
+        };
+      }
+    }
+
+  
+    let content: string;
+    try {
+      content = await getUtilityContent(utility);
+    } catch (error) {
+      return {
+        utility,
+        status: 'failed',
+        error: `Source file not found: ${utility.file}`
+      };
+    }
+
+  
+    if (!config.typescript && isTypeScriptContent(content)) {
+      content = await transformTypeScriptToJavaScript(content);
+    } else if (config.typescript && !isTypeScriptContent(content)) {
+      content = addBasicTypeAnnotations(content);
+    }
+
+  
+    await fs.ensureDir(path.dirname(targetFile));
+    
+  
+    await fs.writeFile(targetFile, content, 'utf8');
+
+    const status = (await fs.pathExists(targetFile) && options.overwrite) ? 'overwritten' : 'installed';
+
+    return {
+      utility,
+      status,
+      path: targetFile
+    };
+
+  } catch (error) {
+    return {
+      utility,
+      status: 'failed',
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
+}
+
+function isTypeScriptContent(content: string): boolean {
+  const tsPatterns = [
+    /:\s*[A-Za-z<>[\]{}|&\s,]+(?=\s*[=;,)\]])/,
+    /interface\s+\w+/,                       
+    /type\s+\w+\s*=/,                       
+    /import\s+type\s/,                      
+    /<[^>]+>/,                              
+    /\w+\?\s*:/,                            
+    /\bas\s+\w+/                            
+  ];
+  
+  return tsPatterns.some(pattern => pattern.test(content));
+}
+function addBasicTypeAnnotations(content: string): string {
+  const typeAnnotation = ': any';
+  
+  content = content.replace(/(\w+)\s*=\s*[^;]+;/g, `$1${typeAnnotation};`);
+  content = content.replace(/(\w+)\s*:\s*[^,)=\n]+(?=[,)=])/g, `$1${typeAnnotation}`);
+  content = content.replace(/(\w+)\s*:\s*[^=;,)\n]+(?=[=;,)])/g, `$1${typeAnnotation}`);
+  
+  return content;
+}
+
 async function getProjectConfig(): Promise<ProjectConfig | null> {
   try {
     const newConfigPath = path.join(process.cwd(), '.forge-utils.json');
@@ -244,14 +325,17 @@ async function getProjectConfig(): Promise<ProjectConfig | null> {
         typescript: true,
         directory: config.utilsPath || 'lib/utils',
         rootPath: process.cwd(),
-        utilsPath: config.utilsPath || 'lib/utils'
+        utilsPath: path.join(process.cwd(), config.utilsPath || 'lib/utils')
       };
     }
 
+  
+    const hasTypeScript = await detectTypeScriptProject();
+    
     const defaultUtilsPath = path.join(process.cwd(), 'lib/utils');
     if (await fs.pathExists(defaultUtilsPath)) {
       return {
-        typescript: false,
+        typescript: hasTypeScript,
         directory: 'lib/utils',
         rootPath: process.cwd(),
         utilsPath: defaultUtilsPath
@@ -264,104 +348,137 @@ async function getProjectConfig(): Promise<ProjectConfig | null> {
   }
 }
 
-/**
- * Install a single utility with enhanced logic
- */
-async function installUtility(
-  utility: UtilityMeta, 
-  config: ProjectConfig, 
-  options: AddOptions
-): Promise<InstallationResult> {
-  try {
-    const fileName = config.typescript 
-      ? utility.file.replace(/\.js$/, '.ts')
-      : utility.file.replace(/\.ts$/, '.js');
-    
-    const targetFile = path.join(config.rootPath, config.directory, fileName);
-
-    if (await fs.pathExists(targetFile)) {
-      if (!options.overwrite) {
-        return {
-          utility,
-          status: 'skipped',
-          path: targetFile
-        };
-      }
+async function detectTypeScriptProject(): Promise<boolean> {
+  const tsIndicators = [
+    'tsconfig.json',
+    'tsconfig.*.json',
+    'src/types.ts',
+    'src/index.ts'
+  ];
+  
+  for (const indicator of tsIndicators) {
+    if (await fs.pathExists(path.join(process.cwd(), indicator))) {
+      return true;
     }
+  }
+  
 
-    let content: string;
+  const packageJsonPath = path.join(process.cwd(), 'package.json');
+  if (await fs.pathExists(packageJsonPath)) {
     try {
-
-      content = await getUtilityContent(utility);
-    } catch (error) {
-
-      const sourceFile = path.join(__dirname, '../utils', utility.file);
+      const packageJson = await fs.readJson(packageJsonPath);
+      const deps = {
+        ...packageJson.dependencies,
+        ...packageJson.devDependencies
+      };
       
-      if (!await fs.pathExists(sourceFile)) {
-        return {
-          utility,
-          status: 'failed',
-          error: `Source file not found: ${utility.file}`
-        };
-      }
-      
-      content = await fs.readFile(sourceFile, 'utf8');
-    }
-
-    if (!config.typescript && utility.file.endsWith('.ts')) {
-      content = await transformTypeScriptToJavaScript(content);
-    }
-
-    await fs.ensureDir(path.dirname(targetFile));
-
-    await fs.writeFile(targetFile, content, 'utf8');
-
-    const status = (await fs.pathExists(targetFile) && options.overwrite) ? 'overwritten' : 'installed';
-
-    return {
-      utility,
-      status,
-      path: targetFile
-    };
-
-  } catch (error) {
-    return {
-      utility,
-      status: 'failed',
-      error: error instanceof Error ? error.message : String(error)
-    };
+      return !!(deps.typescript || deps['@types/node'] || deps['ts-node']);
+    } catch {}
   }
+  
+  return false;
 }
 
-/**
- * Get utility content from registry/templates
- */
 async function getUtilityContent(utility: UtilityMeta): Promise<string> {
-  const templatePath = path.join(__dirname, '..', 'registry', 'templates', utility.file);
+  async function tryReadFile(basePath: string, fileName: string): Promise<string | null> {
+    const possibleExtensions = ['.ts', '.js'];
+    const baseFileName = fileName.replace(/\.(ts|js)$/, '');
+    
+    for (const ext of possibleExtensions) {
+      const fullPath = path.join(basePath, baseFileName + ext);
+      if (await fs.pathExists(fullPath)) {
+        return await fs.readFile(fullPath, 'utf8');
+      }
+    }
+    return null;
+  }
+
+  const sourceBasePath = path.join(__dirname, '..', '..', 'src', 'utils', utility.category);
+  let content = await tryReadFile(sourceBasePath, utility.file);
   
-  if (await fs.pathExists(templatePath)) {
-    return await fs.readFile(templatePath, 'utf8');
+  if (content) {
+    return content;
+  }
+
+  const categoryBasePath = path.join(__dirname, '..', 'utils', utility.category);
+  content = await tryReadFile(categoryBasePath, utility.file);
+  
+  if (content) {
+    return content;
   }
   
-  throw new Error(`Template file not found for utility: ${utility.name}`);
+  const flatBasePath = path.join(__dirname, '..', 'utils');
+  content = await tryReadFile(flatBasePath, utility.file);
+  
+  if (content) {
+    return content;
+  }
+  
+  const templateBasePath = path.join(__dirname, '..', 'registry', 'templates');
+  content = await tryReadFile(templateBasePath, utility.file);
+  
+  if (content) {
+    return content;
+  }
+  
+  throw new Error(`Template file not found for utility: ${utility.name} (${utility.file})`);
 }
 
-/**
- * Transform TypeScript to JavaScript
- */
 async function transformTypeScriptToJavaScript(content: string): Promise<string> {
-  return content
-    .replace(/:\s*[A-Za-z<>[\]{}|&\s,]+(?=\s*[=;,)\]])/g, '')
-    .replace(/interface\s+\w+\s*{[^}]*}/g, '')
-    .replace(/import\s+type\s+{[^}]*}\s+from\s+['"][^'"]*['"];?\n?/g, '')
-    .replace(/<[A-Za-z<>[\]{}|&\s,]*>/g, '')
-    .replace(/export\s+type\s+/g, 'export ')
-    .replace(/\s+as\s+\w+/g, '');
+  try {
+    const result = ts.transpileModule(content, {
+      compilerOptions: {
+        target: ts.ScriptTarget.ES2020,
+        module: ts.ModuleKind.ES2020,
+        moduleResolution: ts.ModuleResolutionKind.Node10,
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true,
+        strict: false,
+        skipLibCheck: true,
+        removeComments: false,
+      }
+    });
+
+    return result.outputText;
+  } catch (error) {
+    console.warn('TypeScript compiler transformation failed, falling back to regex-based transformation');
+    return fallbackTransform(content);
+  }
 }
 
-/**
- * Enhanced installation summary display
- */
+function fallbackTransform(content: string): string {
+  let jsContent = content;
+
+  jsContent = jsContent.replace(/import\s+type\s+\{[^}]*\}\s+from\s+['"][^'"]*['"];?\n?/g, '');
+  
+  jsContent = jsContent.replace(/export\s+interface\s+\w+\s*\{[^}]*\}/gs, '');
+  jsContent = jsContent.replace(/interface\s+\w+\s*\{[^}]*\}/gs, '');
+  
+  jsContent = jsContent.replace(/export\s+type\s+\w+\s*=\s*[^;]+;/g, '');
+  jsContent = jsContent.replace(/type\s+\w+\s*=\s*[^;]+;/g, '');
+  
+  jsContent = jsContent.replace(/(\w+)\s*:\s*[^,)=\n]+(?=[,)=])/g, '$1');
+  
+  jsContent = jsContent.replace(/\):\s*[^{=\n]+(?=[{=])/g, ')');
+  
+  jsContent = jsContent.replace(/(\w+)\s*:\s*[^=;,)\n]+(?=[=;,)])/g, '$1');
+  
+  jsContent = jsContent.replace(/<[^>]*>/g, '');
+  
+  jsContent = jsContent.replace(/\s+as\s+[^;,)}\]\n]+/g, '');
+  
+  jsContent = jsContent.replace(/(\w+)\?\s*(?=[:=])/g, '$1');
+  
+  jsContent = jsContent.replace(/export\s+type\s+/g, 'export ');
+  
+  jsContent = jsContent.replace(/\b(public|private|protected|readonly)\s+/g, '');
+  
+  jsContent = jsContent.replace(/\n\s*\n\s*\n/g, '\n\n');
+  jsContent = jsContent.replace(/\s+$/gm, '');
+  
+  return jsContent;
+}
+
 async function displayInstallationSummary(results: InstallationResult[]) {
   console.log();
   
@@ -445,9 +562,6 @@ async function displayInstallationSummary(results: InstallationResult[]) {
   }
 }
 
-/**
- * Check if a utility is already installed
- */
 export async function isUtilityInstalled(utilityName: string): Promise<boolean> {
   try {
     const config = await getProjectConfig();
@@ -468,9 +582,6 @@ export async function isUtilityInstalled(utilityName: string): Promise<boolean> 
   }
 }
 
-/**
- * Get list of installed utilities
- */
 export async function getInstalledUtilities(): Promise<string[]> {
   try {
     const config = await getProjectConfig();

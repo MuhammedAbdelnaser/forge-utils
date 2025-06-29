@@ -1,0 +1,66 @@
+---
+import { Code2, Github, Heart } from 'lucide-react';
+---
+
+<footer class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- Brand -->
+      <div class="col-span-1 md:col-span-2">
+        <div class="flex items-center space-x-2 text-xl font-bold text-primary-600 dark:text-primary-400 mb-4">
+          <Code2 className="h-8 w-8" />
+          <span>forge-utils</span>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 mb-4 max-w-md">
+          A modern utility toolkit designed for maximum ownership, modularity, and clarity. 
+          Copy clean, well-documented utilities directly into your codebase.
+        </p>
+        <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+          <span>Made with</span>
+          <Heart className="h-4 w-4 text-red-500" />
+          <span>for developers who want to own their code</span>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Links</h3>
+        <ul class="space-y-2">
+          <li><a href="/" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Home</a></li>
+          <li><a href="/docs" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Documentation</a></li>
+          <li><a href="/playground" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Playground</a></li>
+          <li><a href="/admin" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Admin</a></li>
+        </ul>
+      </div>
+
+      <!-- Resources -->
+      <div>
+        <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-4">Resources</h3>
+        <ul class="space-y-2">
+          <li><a href="https://github.com/MuhammedAbdelnaser/forge-utils" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">GitHub</a></li>
+          <li><a href="https://www.npmjs.com/package/forge-utils" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">NPM</a></li>
+          <li><a href="/changelog" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Changelog</a></li>
+          <li><a href="/contributing" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Contributing</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-500 dark:text-gray-400 text-sm">
+          © 2024 forge-utils. MIT License. Created by Muhammed Abdelnaser.
+        </p>
+        <div class="flex items-center space-x-4 mt-4 md:mt-0">
+          <a 
+            href="https://github.com/MuhammedAbdelnaser/forge-utils" 
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          >
+            <Github className="h-5 w-5" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

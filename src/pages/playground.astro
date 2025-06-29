@@ -1,0 +1,538 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { Play, Code, Download, RefreshCw } from 'lucide-react';
+---
+
+<Layout title="Playground - forge-utils">
+  <Header />
+  
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Interactive Playground
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          Test and experiment with forge-utils functions in real-time. 
+          Try different utilities, modify parameters, and see the results instantly.
+        </p>
+      </div>
+
+      <!-- Playground Interface -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <!-- Toolbar -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+          <div class="flex items-center space-x-4">
+            <select 
+              id="utility-select"
+              class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="">Select a utility...</option>
+              <option value="dataURItoFile">dataURItoFile</option>
+              <option value="preventInteractionsOutsideOf">preventInteractionsOutsideOf</option>
+              <option value="queryFocusable">queryFocusable</option>
+              <option value="isElementScrollable">isElementScrollable</option>
+            </select>
+            
+            <button 
+              id="run-btn"
+              class="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Run Code
+            </button>
+            
+            <button 
+              id="reset-btn"
+              class="inline-flex items-center px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Reset
+            </button>
+          </div>
+          
+          <div class="flex items-center space-x-2">
+            <button 
+              id="copy-btn"
+              class="inline-flex items-center px-3 py-2 bg-secondary-600 text-white font-medium rounded-lg hover:bg-secondary-700 transition-colors"
+            >
+              <Code className="h-4 w-4 mr-2" />
+              Copy Code
+            </button>
+            
+            <button 
+              id="install-btn"
+              class="inline-flex items-center px-3 py-2 bg-accent-600 text-white font-medium rounded-lg hover:bg-accent-700 transition-colors"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Install
+            </button>
+          </div>
+        </div>
+
+        <!-- Code Editor and Output -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
+          <!-- Code Editor -->
+          <div class="border-r border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <h3 class="font-medium text-gray-900 dark:text-white">Code Editor</h3>
+            </div>
+            <div class="p-4">
+              <textarea 
+                id="code-editor"
+                class="w-full h-[500px] p-4 font-mono text-sm bg-gray-900 text-gray-100 rounded-lg border border-gray-600 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                placeholder="Select a utility from the dropdown to load example code..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Output Panel -->
+          <div>
+            <div class="px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <h3 class="font-medium text-gray-900 dark:text-white">Output</h3>
+            </div>
+            <div class="p-4">
+              <!-- Console Output -->
+              <div class="mb-4">
+                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Console</h4>
+                <div 
+                  id="console-output"
+                  class="h-32 p-3 bg-gray-900 text-green-400 font-mono text-sm rounded-lg overflow-y-auto border border-gray-600"
+                >
+                  <div class="text-gray-500">// Console output will appear here...</div>
+                </div>
+              </div>
+
+              <!-- Visual Output -->
+              <div>
+                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Visual Output</h4>
+                <div 
+                  id="visual-output"
+                  class="h-80 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 overflow-auto"
+                >
+                  <div class="text-gray-500 dark:text-gray-400 text-center py-8">
+                    Select and run a utility to see visual output here
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Examples Section -->
+      <div class="mt-12">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Popular Examples
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Example Cards -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer example-card" data-utility="dataURItoFile">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+              File Conversion
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+              Convert data URI strings to File objects for form uploads
+            </p>
+            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium">
+              Try dataURItoFile →
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer example-card" data-utility="preventInteractionsOutsideOf">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+              Modal Focus Trap
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+              Prevent interactions outside modal containers
+            </p>
+            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium">
+              Try preventInteractionsOutsideOf →
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer example-card" data-utility="queryFocusable">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+              Find Focusable Elements
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+              Query all focusable elements within a container
+            </p>
+            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium">
+              Try queryFocusable →
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+
+  <script>
+    // Playground functionality
+    const utilityExamples = {
+      dataURItoFile: `// Convert data URI to File object
+const dataURI = 'data:text/plain;base64,SGVsbG8gV29ybGQ=';
+const filename = 'hello.txt';
+
+try {
+  const file = dataURItoFile(dataURI, filename);
+  
+  console.log('File created successfully!');
+  console.log('Name:', file.name);
+  console.log('Type:', file.type);
+  console.log('Size:', file.size, 'bytes');
+  
+  // Create download link for demonstration
+  const url = URL.createObjectURL(file);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = file.name;
+  link.textContent = 'Download ' + file.name;
+  link.className = 'text-primary-600 hover:text-primary-700 underline';
+  
+  document.getElementById('visual-output').innerHTML = '';
+  document.getElementById('visual-output').appendChild(link);
+  
+} catch (error) {
+  console.error('Error:', error.message);
+}
+
+function dataURItoFile(dataURI, filename) {
+  const arr = dataURI.split(',');
+  
+  if (arr.length !== 2) {
+    throw new Error('Invalid data URI format');
+  }
+  
+  const mimeMatch = arr[0].match(/:(.*?);/);
+  const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+  
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  
+  return new File([u8arr], filename, { type: mime });
+}`,
+
+      preventInteractionsOutsideOf: `// Create a modal demonstration
+const modal = document.createElement('div');
+modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+modal.innerHTML = \`
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+    <h3 class="text-lg font-semibold mb-4">Modal Example</h3>
+    <p class="text-gray-600 dark:text-gray-300 mb-4">
+      Try tabbing or scrolling - interactions are trapped within this modal!
+    </p>
+    <div class="space-y-2">
+      <input type="text" placeholder="First input" class="w-full p-2 border rounded">
+      <input type="text" placeholder="Second input" class="w-full p-2 border rounded">
+      <button id="close-modal" class="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700">
+        Close Modal
+      </button>
+    </div>
+  </div>
+\`;
+
+document.body.appendChild(modal);
+
+// Apply interaction prevention
+const cleanup = preventInteractionsOutsideOf(modal.firstElementChild);
+
+console.log('Modal created with interaction prevention');
+console.log('Try tabbing or scrolling - interactions are trapped!');
+
+// Close modal functionality
+document.getElementById('close-modal').addEventListener('click', () => {
+  cleanup();
+  document.body.removeChild(modal);
+  console.log('Modal closed and interactions restored');
+});
+
+// Simplified version of the utility for demo
+function preventInteractionsOutsideOf(container) {
+  const handleKeyDown = (e) => {
+    if (e.key === 'Tab') {
+      const focusables = container.querySelectorAll('input, button, [tabindex]:not([tabindex="-1"])');
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+  
+  document.addEventListener('keydown', handleKeyDown);
+  
+  return () => {
+    document.removeEventListener('keydown', handleKeyDown);
+  };
+}`,
+
+      queryFocusable: `// Create a test container with various elements
+const container = document.createElement('div');
+container.className = 'p-4 border border-gray-300 rounded-lg space-y-2';
+container.innerHTML = \`
+  <h3 class="font-semibold mb-2">Test Container</h3>
+  <input type="text" placeholder="Text input" class="block w-full p-2 border rounded">
+  <button class="bg-blue-500 text-white px-3 py-1 rounded">Button</button>
+  <a href="#" class="text-blue-600 underline block">Link</a>
+  <select class="block p-2 border rounded">
+    <option>Option 1</option>
+    <option>Option 2</option>
+  </select>
+  <textarea placeholder="Textarea" class="block w-full p-2 border rounded h-20"></textarea>
+  <div tabindex="0" class="p-2 bg-gray-100 rounded cursor-pointer">Focusable div</div>
+  <button disabled class="bg-gray-300 text-gray-500 px-3 py-1 rounded cursor-not-allowed">Disabled button</button>
+  <input type="hidden" value="hidden">
+\`;
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(container);
+
+// Find focusable elements
+const focusableElements = queryFocusable(container);
+
+console.log('Container created with various elements');
+console.log('Found', focusableElements.length, 'focusable elements:');
+
+focusableElements.forEach((element, index) => {
+  console.log(\`\${index + 1}. \${element.tagName.toLowerCase()}\${element.type ? '[' + element.type + ']' : ''}\`);
+  
+  // Add visual indicator
+  element.style.outline = '2px solid #3b82f6';
+  element.style.outlineOffset = '2px';
+});
+
+// Add focus event listeners for demonstration
+focusableElements.forEach((element, index) => {
+  element.addEventListener('focus', () => {
+    console.log(\`Focused element \${index + 1}: \${element.tagName.toLowerCase()}\`);
+  });
+});
+
+function queryFocusable(element) {
+  const focusableSelectors = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(',');
+  
+  const nodeList = element.querySelectorAll(focusableSelectors);
+  
+  return Array.from(nodeList).filter(node => {
+    const style = window.getComputedStyle(node);
+    return (
+      style.display !== 'none' &&
+      style.visibility !== 'hidden' &&
+      node.tabIndex >= 0
+    );
+  });
+}`,
+
+      isElementScrollable: `// Create test elements with different scroll behaviors
+const testContainer = document.createElement('div');
+testContainer.className = 'space-y-4';
+
+// Scrollable element
+const scrollableDiv = document.createElement('div');
+scrollableDiv.className = 'h-32 overflow-y-auto border border-gray-300 p-4 bg-gray-50';
+scrollableDiv.innerHTML = \`
+  <h4 class="font-semibold mb-2">Scrollable Content</h4>
+  <p>This is a scrollable container with overflow content.</p>
+  \${'<p>Line of content</p>'.repeat(10)}
+\`;
+
+// Non-scrollable element
+const nonScrollableDiv = document.createElement('div');
+nonScrollableDiv.className = 'h-32 border border-gray-300 p-4 bg-blue-50';
+nonScrollableDiv.innerHTML = \`
+  <h4 class="font-semibold mb-2">Non-scrollable Content</h4>
+  <p>This container has content that fits within its height.</p>
+\`;
+
+testContainer.appendChild(scrollableDiv);
+testContainer.appendChild(nonScrollableDiv);
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(testContainer);
+
+// Test both elements
+const elements = [
+  { element: scrollableDiv, name: 'Scrollable Div' },
+  { element: nonScrollableDiv, name: 'Non-scrollable Div' }
+];
+
+console.log('Testing scroll detection on different elements:');
+
+elements.forEach(({ element, name }) => {
+  const isScrollable = isElementScrollable(element);
+  console.log(\`\${name}: \${isScrollable ? 'SCROLLABLE' : 'NOT SCROLLABLE'}\`);
+  
+  // Add visual indicator
+  const indicator = document.createElement('div');
+  indicator.className = \`text-sm font-medium p-2 rounded \${
+    isScrollable 
+      ? 'bg-green-100 text-green-800 border border-green-300' 
+      : 'bg-red-100 text-red-800 border border-red-300'
+  }\`;
+  indicator.textContent = \`\${name}: \${isScrollable ? 'Scrollable ✓' : 'Not Scrollable ✗'}\`;
+  
+  element.parentNode.insertBefore(indicator, element);
+});
+
+function isElementScrollable(element) {
+  if (!(element instanceof HTMLElement)) {
+    return false;
+  }
+  
+  return element.scrollHeight > element.clientHeight;
+}`
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const utilitySelect = document.getElementById('utility-select');
+      const codeEditor = document.getElementById('code-editor');
+      const runBtn = document.getElementById('run-btn');
+      const resetBtn = document.getElementById('reset-btn');
+      const copyBtn = document.getElementById('copy-btn');
+      const installBtn = document.getElementById('install-btn');
+      const consoleOutput = document.getElementById('console-output');
+      const visualOutput = document.getElementById('visual-output');
+      const exampleCards = document.querySelectorAll('.example-card');
+
+      let selectedUtility = '';
+
+      // Utility selection
+      utilitySelect.addEventListener('change', (e) => {
+        selectedUtility = e.target.value;
+        if (selectedUtility && utilityExamples[selectedUtility]) {
+          codeEditor.value = utilityExamples[selectedUtility];
+          runBtn.disabled = false;
+        } else {
+          codeEditor.value = '';
+          runBtn.disabled = true;
+        }
+        clearOutput();
+      });
+
+      // Example card clicks
+      exampleCards.forEach(card => {
+        card.addEventListener('click', () => {
+          const utility = card.getAttribute('data-utility');
+          utilitySelect.value = utility;
+          utilitySelect.dispatchEvent(new Event('change'));
+        });
+      });
+
+      // Run code
+      runBtn.addEventListener('click', () => {
+        if (!codeEditor.value.trim()) return;
+        
+        clearOutput();
+        
+        // Capture console output
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        console.log = (...args) => {
+          appendToConsole(args.join(' '), 'log');
+          originalLog.apply(console, args);
+        };
+        
+        console.error = (...args) => {
+          appendToConsole(args.join(' '), 'error');
+          originalError.apply(console, args);
+        };
+
+        try {
+          // Execute the code
+          eval(codeEditor.value);
+        } catch (error) {
+          console.error('Execution Error:', error.message);
+        }
+
+        // Restore console
+        console.log = originalLog;
+        console.error = originalError;
+      });
+
+      // Reset
+      resetBtn.addEventListener('click', () => {
+        codeEditor.value = '';
+        utilitySelect.value = '';
+        selectedUtility = '';
+        runBtn.disabled = true;
+        clearOutput();
+      });
+
+      // Copy code
+      copyBtn.addEventListener('click', async () => {
+        if (!codeEditor.value.trim()) return;
+        
+        try {
+          await navigator.clipboard.writeText(codeEditor.value);
+          const originalText = copyBtn.innerHTML;
+          copyBtn.innerHTML = copyBtn.innerHTML.replace('Copy Code', 'Copied!');
+          setTimeout(() => {
+            copyBtn.innerHTML = originalText;
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy code:', err);
+        }
+      });
+
+      // Install utility
+      installBtn.addEventListener('click', async () => {
+        if (!selectedUtility) return;
+        
+        const command = \`forge-utils add \${selectedUtility}\`;
+        try {
+          await navigator.clipboard.writeText(command);
+          const originalText = installBtn.innerHTML;
+          installBtn.innerHTML = installBtn.innerHTML.replace('Install', 'Copied!');
+          setTimeout(() => {
+            installBtn.innerHTML = originalText;
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy install command:', err);
+        }
+      });
+
+      function clearOutput() {
+        consoleOutput.innerHTML = '<div class="text-gray-500">// Console output will appear here...</div>';
+        visualOutput.innerHTML = '<div class="text-gray-500 dark:text-gray-400 text-center py-8">Select and run a utility to see visual output here</div>';
+      }
+
+      function appendToConsole(message, type = 'log') {
+        if (consoleOutput.innerHTML.includes('Console output will appear here')) {
+          consoleOutput.innerHTML = '';
+        }
+        
+        const line = document.createElement('div');
+        line.className = type === 'error' ? 'text-red-400' : 'text-green-400';
+        line.textContent = message;
+        consoleOutput.appendChild(line);
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+      }
+    });
+  </script>
+</Layout>

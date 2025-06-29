@@ -1,87 +1,30 @@
 {
-  "name": "forge-utils",
-  "version": "1.0.0",
-  "description": "A modern CLI utility that injects ready-to-edit JavaScript/TypeScript helper functions directly into your project source code. Own and customize your utilities, with no runtime dependencies.",
-  "main": "dist/cli/index.js",
-  "types": "dist/cli/index.d.ts",
-  "bin": {
-    "forge-utils": "./bin/forge-utils.js"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/cli/index.js",
-      "types": "./dist/cli/index.d.ts"
-    }
-  },
+  "name": "forge-utils-website",
+  "type": "module",
+  "version": "0.0.1",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "test": "jest",
-    "lint": "eslint src/**/*.ts",
-    "format": "prettier --write .",
-    "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist",
-    "dev:cli": "ts-node src/cli/index.ts",
-    "link": "npm run build && npm link",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm run build"
-  },
-  "keywords": [
-    "cli",
-    "utility-functions",
-    "typescript",
-    "code-generation",
-    "devtools",
-    "copy-paste",
-    "editable-utils",
-    "code-snippets",
-    "developer-productivity",
-    "code-injection"
-  ],
-  "author": "Muhammed Abdelnaser",
-  "license": "MIT",
-  "homepage": "https://github.com/MuhammedAbdelnaser/forge-utils#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MuhammedAbdelnaser/forge-utils.git"
-  },
-  "bugs": {
-    "url": "https://github.com/MuhammedAbdelnaser/forge-utils/issues"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
-    "chalk": "^4.1.2",
-    "commander": "^11.1.0",
-    "fs-extra": "^11.2.0",
-    "glob": "^10.3.10",
-    "ora": "^5.4.1",
-    "prompts": "^2.4.2"
+    "@astrojs/check": "^0.3.1",
+    "@astrojs/react": "^3.0.7",
+    "@astrojs/tailwind": "^5.0.3",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "astro": "^4.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.2",
+    "prismjs": "^1.29.0",
+    "lucide-react": "^0.294.0",
+    "fuse.js": "^7.0.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
-    "@types/jest": "^29.5.8",
-    "@types/node": "^20.10.0",
-    "@types/prompts": "^2.4.9",
-    "@typescript-eslint/eslint-plugin": "^6.13.0",
-    "@typescript-eslint/parser": "^6.13.0",
-    "eslint": "^8.55.0",
-    "jest": "^29.7.0",
-    "ts-node": "^10.9.0",
-    "typescript": "^5.3.0",
-    "prettier": "^3.3.1"
-  },
-  "files": [
-    "dist",
-    "bin",
-    "src/templates",
-    "registry",
-    "README.md",
-    "license.txt"
-  ],
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "preferGlobal": true,
-  "publishConfig": {
-    "access": "public"
+    "@types/prismjs": "^1.26.3"
   }
 }

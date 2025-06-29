@@ -1,0 +1,360 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { Settings, Plus, Edit, Trash2, Save, Upload, Download } from 'lucide-react';
+---
+
+<Layout title="Admin Panel - forge-utils">
+  <Header />
+  
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+            Admin Panel
+          </h1>
+          <p class="text-gray-600 dark:text-gray-300">
+            Manage utilities, categories, and documentation content
+          </p>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+          <button class="inline-flex items-center px-4 py-2 bg-secondary-600 text-white font-medium rounded-lg hover:bg-secondary-700 transition-colors">
+            <Upload className="h-4 w-4 mr-2" />
+            Import
+          </button>
+          <button class="inline-flex items-center px-4 py-2 bg-accent-600 text-white font-medium rounded-lg hover:bg-accent-700 transition-colors">
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Tabs -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <!-- Tab Navigation -->
+        <div class="border-b border-gray-200 dark:border-gray-700">
+          <nav class="flex space-x-8 px-6" aria-label="Tabs">
+            <button class="admin-tab active py-4 px-1 border-b-2 border-primary-500 font-medium text-sm text-primary-600 dark:text-primary-400" data-tab="utilities">
+              Utilities
+            </button>
+            <button class="admin-tab py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" data-tab="categories">
+              Categories
+            </button>
+            <button class="admin-tab py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" data-tab="content">
+              Content
+            </button>
+            <button class="admin-tab py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" data-tab="settings">
+              Settings
+            </button>
+          </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="p-6">
+          <!-- Utilities Tab -->
+          <div id="utilities-tab" class="tab-content">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Manage Utilities
+              </h2>
+              <button class="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Utility
+              </button>
+            </div>
+
+            <!-- Utilities Table -->
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Category
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Dependencies
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      File
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900 dark:text-white">
+                        dataURItoFile
+                      </div>
+                      <div class="text-sm text-gray-500 dark:text-gray-400">
+                        Convert data URI string to File object
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                        file-handling
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      None
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono">
+                      dataURItoFile.ts
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-3">
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                  <!-- More utility rows would be dynamically generated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Categories Tab -->
+          <div id="categories-tab" class="tab-content hidden">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Manage Categories
+              </h2>
+              <button class="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Category
+              </button>
+            </div>
+
+            <!-- Categories Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center">
+                    <span class="text-2xl mr-3">📁</span>
+                    <h3 class="font-semibold text-gray-900 dark:text-white">
+                      file-handling
+                    </h3>
+                  </div>
+                  <div class="flex space-x-2">
+                    <button class="text-primary-600 hover:text-primary-700 dark:text-primary-400">
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button class="text-red-600 hover:text-red-700 dark:text-red-400">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                  Utilities for file operations and conversions
+                </p>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                  1 utility
+                </div>
+              </div>
+
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center">
+                    <span class="text-2xl mr-3">🌐</span>
+                    <h3 class="font-semibold text-gray-900 dark:text-white">
+                      dom-manipulation
+                    </h3>
+                  </div>
+                  <div class="flex space-x-2">
+                    <button class="text-primary-600 hover:text-primary-700 dark:text-primary-400">
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button class="text-red-600 hover:text-red-700 dark:text-red-400">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                  Modern DOM utilities for scrolling, focus management, and element interactions
+                </p>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                  18 utilities
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Tab -->
+          <div id="content-tab" class="tab-content hidden">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Content Management
+              </h2>
+              <button class="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors">
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </button>
+            </div>
+
+            <!-- Content Editor -->
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Select Utility to Edit
+                </label>
+                <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                  <option value="">Choose a utility...</option>
+                  <option value="dataURItoFile">dataURItoFile</option>
+                  <option value="preventInteractionsOutsideOf">preventInteractionsOutsideOf</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Source Code Editor -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Source Code
+                  </label>
+                  <textarea 
+                    class="w-full h-96 p-4 font-mono text-sm bg-gray-900 text-gray-100 rounded-lg border border-gray-600 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                    placeholder="Utility source code will appear here..."
+                  ></textarea>
+                </div>
+
+                <!-- Documentation Editor -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Documentation
+                  </label>
+                  <textarea 
+                    class="w-full h-96 p-4 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                    placeholder="Documentation content in Markdown format..."
+                  ></textarea>
+                </div>
+              </div>
+
+              <!-- Examples Editor -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Usage Examples
+                </label>
+                <textarea 
+                  class="w-full h-48 p-4 font-mono text-sm bg-gray-900 text-gray-100 rounded-lg border border-gray-600 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                  placeholder="Code examples for the playground..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Tab -->
+          <div id="settings-tab" class="tab-content hidden">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                System Settings
+              </h2>
+              <button class="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors">
+                <Save className="h-4 w-4 mr-2" />
+                Save Settings
+              </button>
+            </div>
+
+            <!-- Settings Form -->
+            <div class="space-y-6 max-w-2xl">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Registry Version
+                </label>
+                <input 
+                  type="text" 
+                  value="1.0.0"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Default TypeScript Support
+                </label>
+                <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                  <option value="true">Enabled</option>
+                  <option value="false">Disabled</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Default Installation Directory
+                </label>
+                <input 
+                  type="text" 
+                  value="lib/utils"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Auto-backup Registry
+                </label>
+                <div class="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    checked
+                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                  <label class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                    Automatically backup registry changes
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+
+  <script>
+    // Admin panel functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.admin-tab');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const targetTab = tab.getAttribute('data-tab');
+          
+          // Remove active class from all tabs
+          tabs.forEach(t => {
+            t.classList.remove('active', 'border-primary-500', 'text-primary-600', 'dark:text-primary-400');
+            t.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400', 'dark:hover:text-gray-300');
+          });
+          
+          // Add active class to clicked tab
+          tab.classList.add('active', 'border-primary-500', 'text-primary-600', 'dark:text-primary-400');
+          tab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400', 'dark:hover:text-gray-300');
+          
+          // Hide all tab contents
+          tabContents.forEach(content => {
+            content.classList.add('hidden');
+          });
+          
+          // Show target tab content
+          const targetContent = document.getElementById(`${targetTab}-tab`);
+          if (targetContent) {
+            targetContent.classList.remove('hidden');
+          }
+        });
+      });
+    });
+  </script>
+</Layout>

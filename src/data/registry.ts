@@ -1,0 +1,195 @@
+export interface UtilityMeta {
+  name: string;
+  category: string;
+  file: string;
+  description: string;
+  dependencies: string[];
+}
+
+export interface Category {
+  name: string;
+  description: string;
+  icon: string;
+}
+
+export interface Registry {
+  version: string;
+  categories: Category[];
+  utilities: UtilityMeta[];
+}
+
+export const registry: Registry = {
+  "version": "1.0.0",
+  "categories": [
+    {
+      "name": "file-handling",
+      "description": "Utilities for file operations and conversions",
+      "icon": "📁"
+    },
+    {
+      "name": "dom-manipulation",
+      "description": "Modern DOM utilities for scrolling, focus management, and element interactions",
+      "icon": "🌐"
+    },
+    {
+      "name": "async-helpers",
+      "description": "Promise utilities, retry logic, debouncing, throttling",
+      "icon": "⚡"
+    },
+    {
+      "name": "data-conversion",
+      "description": "Data transformation, encoding/decoding, format conversion",
+      "icon": "🔄"
+    },
+    {
+      "name": "image-processing",
+      "description": "Image manipulation, canvas utilities, format conversion",
+      "icon": "🖼️"
+    },
+    {
+      "name": "validation",
+      "description": "Input validation, schema validation, type checking",
+      "icon": "✅"
+    }
+  ],
+  "utilities": [
+    {
+      "name": "dataURItoFile",
+      "category": "file-handling",
+      "file": "dataURItoFile.ts",
+      "description": "Convert data URI string to File object",
+      "dependencies": []
+    },
+    {
+      "name": "getVerticalScrollParent",
+      "category": "dom-manipulation",
+      "file": "getVerticalScrollParent.ts",
+      "description": "Find the nearest scrollable parent element",
+      "dependencies": []
+    },
+    {
+      "name": "isScrolledToBottom",
+      "category": "dom-manipulation",
+      "file": "isScrolledToBottom.ts",
+      "description": "Check if element is scrolled to bottom with optional buffer",
+      "dependencies": []
+    },
+    {
+      "name": "hasRoomForMore",
+      "category": "dom-manipulation",
+      "file": "hasRoomForMore.ts",
+      "description": "Check if element has remaining scroll area",
+      "dependencies": []
+    },
+    {
+      "name": "isScrolledPastHalfWay",
+      "category": "dom-manipulation",
+      "file": "isScrolledPastHalfWay.ts",
+      "description": "Check if element is scrolled past 50% of its height",
+      "dependencies": []
+    },
+    {
+      "name": "remainingScrollAreaShorterThanHeight",
+      "category": "dom-manipulation",
+      "file": "remainingScrollAreaShorterThanHeight.ts",
+      "description": "Check if remaining scroll area is shorter than element height",
+      "dependencies": []
+    },
+    {
+      "name": "scrollIntoView",
+      "category": "dom-manipulation",
+      "file": "scrollIntoView.ts",
+      "description": "Smooth scroll element into view with offset support",
+      "dependencies": ["getVerticalScrollParent"]
+    },
+    {
+      "name": "queryFocusable",
+      "category": "dom-manipulation",
+      "file": "queryFocusable.ts",
+      "description": "Find all focusable elements within a container",
+      "dependencies": []
+    },
+    {
+      "name": "focusWithin",
+      "category": "dom-manipulation",
+      "file": "focusWithin.ts",
+      "description": "Focus first available element within container",
+      "dependencies": ["queryFocusable"]
+    },
+    {
+      "name": "submitParentForm",
+      "category": "dom-manipulation",
+      "file": "submitParentForm.ts",
+      "description": "Submit the parent form of an element",
+      "dependencies": []
+    },
+    {
+      "name": "preventFocusOut",
+      "category": "dom-manipulation",
+      "file": "preventFocusOut.ts",
+      "description": "Trap focus within a container (for modals, dropdowns)",
+      "dependencies": ["queryFocusable", "focusWithin"]
+    },
+    {
+      "name": "onThisKeyDown",
+      "category": "dom-manipulation",
+      "file": "onThisKeyDown.ts",
+      "description": "Add keydown listener for specific key with cleanup",
+      "dependencies": []
+    },
+    {
+      "name": "isElementScrollable",
+      "category": "dom-manipulation",
+      "file": "isElementScrollable.ts",
+      "description": "Check if element has scrollable content",
+      "dependencies": []
+    },
+    {
+      "name": "preventOverscroll",
+      "category": "dom-manipulation",
+      "file": "preventOverscroll.ts",
+      "description": "Prevent overscroll behavior on container elements",
+      "dependencies": ["isElementScrollable"]
+    },
+    {
+      "name": "preventInteractionsOutsideOf",
+      "category": "dom-manipulation",
+      "file": "preventInteractionsOutsideOf.ts",
+      "description": "Prevent all interactions outside of specified container",
+      "dependencies": ["preventFocusOut", "preventOverscroll"]
+    },
+    {
+      "name": "getDocumentHeight",
+      "category": "dom-manipulation",
+      "file": "getDocumentHeight.ts",
+      "description": "Get the full height of the document",
+      "dependencies": []
+    },
+    {
+      "name": "isTargetFixed",
+      "category": "dom-manipulation",
+      "file": "isTargetFixed.ts",
+      "description": "Check if element has fixed or sticky positioning",
+      "dependencies": []
+    },
+    {
+      "name": "selectNodeTextContents",
+      "category": "dom-manipulation",
+      "file": "selectNodeTextContents.ts",
+      "description": "Select all text content within a node",
+      "dependencies": []
+    }
+  ]
+};
+
+export function getUtilitiesByCategory(categoryName: string): UtilityMeta[] {
+  return registry.utilities.filter(utility => utility.category === categoryName);
+}
+
+export function getUtilityByName(name: string): UtilityMeta | undefined {
+  return registry.utilities.find(utility => utility.name === name);
+}
+
+export function getCategoryByName(name: string): Category | undefined {
+  return registry.categories.find(category => category.name === name);
+}

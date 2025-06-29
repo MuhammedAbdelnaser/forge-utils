@@ -1,0 +1,327 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, Copy, Check } from 'lucide-react';
+---
+
+<Layout title="forge-utils - Own Your Utility Code">
+  <Header />
+  
+  <main>
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+        <div class="text-center max-w-4xl mx-auto">
+          <div class="flex justify-center mb-8">
+            <div class="p-4 bg-primary-100 dark:bg-primary-900/30 rounded-2xl">
+              <Code2 className="h-16 w-16 text-primary-600 dark:text-primary-400" />
+            </div>
+          </div>
+          
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+            Own Your <span class="text-primary-600 dark:text-primary-400">Utility Code</span>
+          </h1>
+          
+          <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+            A modern utility toolkit designed for maximum ownership, modularity, and clarity. 
+            Instead of installing opaque dependencies, forge-utils helps you 
+            <strong class="text-gray-900 dark:text-white">copy clean, well-documented utilities directly into your codebase</strong>—so you're in charge.
+          </p>
+          
+          <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <a 
+              href="/docs" 
+              class="inline-flex items-center px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors shadow-lg hover:shadow-xl"
+            >
+              <BookOpen className="h-5 w-5 mr-2" />
+              Get Started
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </a>
+            
+            <a 
+              href="/playground" 
+              class="inline-flex items-center px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              <Terminal className="h-5 w-5 mr-2" />
+              Try Playground
+            </a>
+          </div>
+          
+          <!-- Installation Command -->
+          <div class="bg-gray-900 dark:bg-gray-800 rounded-lg p-6 max-w-2xl mx-auto">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-400 text-sm font-medium">Quick Install</span>
+              <button 
+                class="copy-btn p-2 text-gray-400 hover:text-white transition-colors rounded"
+                data-copy="npm install -g forge-utils"
+              >
+                <Copy className="h-4 w-4 copy-icon" />
+                <Check className="h-4 w-4 check-icon hidden text-green-400" />
+              </button>
+            </div>
+            <code class="text-green-400 font-mono text-lg">npm install -g forge-utils</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Philosophy Section -->
+    <section class="py-20 bg-white dark:bg-gray-900">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Why forge-utils?
+          </h2>
+          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            forge-utils is not a typical utility library. It's a <strong>code injection toolkit</strong> 
+            that integrates curated utilities into your codebase, giving you <strong>100% control</strong> and <strong>zero coupling</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Code Ownership -->
+          <div class="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 p-8 rounded-xl">
+            <div class="p-3 bg-primary-600 dark:bg-primary-500 rounded-lg w-fit mb-4">
+              <Shield className="h-6 w-6 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              🎯 Code Ownership by Design
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300">
+              Every utility is copied to your local project for full transparency and flexibility. 
+              No black boxes, no surprises.
+            </p>
+          </div>
+
+          <!-- Tailored to You -->
+          <div class="bg-gradient-to-br from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/20 p-8 rounded-xl">
+            <div class="p-3 bg-secondary-600 dark:bg-secondary-500 rounded-lg w-fit mb-4">
+              <Wrench className="h-6 w-6 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              🛠️ Tailored to You
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300">
+              Utilities are fully editable from the start. No monkey-patching, just your own code 
+              that you can modify as needed.
+            </p>
+          </div>
+
+          <!-- No Runtime Overhead -->
+          <div class="bg-gradient-to-br from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20 p-8 rounded-xl">
+            <div class="p-3 bg-accent-600 dark:bg-accent-500 rounded-lg w-fit mb-4">
+              <Zap className="h-6 w-6 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              ⚖️ No Runtime Overhead
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300">
+              Zero external runtime dependencies. Use what you need, and nothing else. 
+              Your bundle stays lean.
+            </p>
+          </div>
+
+          <!-- Typed by Default -->
+          <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-8 rounded-xl">
+            <div class="p-3 bg-green-600 dark:bg-green-500 rounded-lg w-fit mb-4">
+              <Code2 className="h-6 w-6 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              🧠 Typed by Default
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300">
+              Fully typed in TypeScript with smooth JS compatibility. 
+              Get the best developer experience with full IntelliSense.
+            </p>
+          </div>
+
+          <!-- CLI-Driven UX -->
+          <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-8 rounded-xl">
+            <div class="p-3 bg-purple-600 dark:bg-purple-500 rounded-lg w-fit mb-4">
+              <Terminal className="h-6 w-6 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              🚀 CLI-Driven UX
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300">
+              Install, list, or remove utilities in seconds with the simple forge-utils CLI. 
+              Streamlined workflow for maximum productivity.
+            </p>
+          </div>
+
+          <!-- Modular by Nature -->
+          <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-8 rounded-xl">
+            <div class="p-3 bg-blue-600 dark:bg-blue-500 rounded-lg w-fit mb-4">
+              <BookOpen className="h-6 w-6 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              📚 Modular by Nature
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300">
+              Organized by domain (DOM, async, validation, etc.), with docs and usage patterns included. 
+              Find what you need quickly.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="py-20 bg-gray-50 dark:bg-gray-800">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Quick Start
+          </h2>
+          <p class="text-xl text-gray-600 dark:text-gray-300">
+            Get up and running with forge-utils in minutes
+          </p>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Installation Steps -->
+            <div class="space-y-6">
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-semibold">
+                  1
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Install globally
+                  </h3>
+                  <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
+                    <code class="text-green-400 font-mono">npm install -g forge-utils</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-semibold">
+                  2
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Initialize in your project
+                  </h3>
+                  <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
+                    <code class="text-green-400 font-mono">forge-utils init --typescript</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-semibold">
+                  3
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Add utilities
+                  </h3>
+                  <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
+                    <code class="text-green-400 font-mono">forge-utils add dataURItoFile</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-semibold">
+                  4
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Use in your code
+                  </h3>
+                  <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
+                    <code class="text-green-400 font-mono text-sm">
+                      import { dataURItoFile } from './lib/utils'
+                    </code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Example Usage -->
+            <div class="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Example Usage
+              </h3>
+              <pre class="language-typescript text-sm overflow-x-auto"><code class="language-typescript">// After adding the utility
+import { dataURItoFile } from './lib/utils';
+
+// Convert data URI to File
+const dataURI = 'data:text/plain;base64,SGVsbG8gV29ybGQ=';
+const file = dataURItoFile(dataURI, 'hello.txt');
+
+console.log(file.name); // 'hello.txt'
+console.log(file.type); // 'text/plain'
+
+// Use with FormData
+const formData = new FormData();
+formData.append('file', file);</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-primary-600 dark:bg-primary-700">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
+          Ready to Own Your Code?
+        </h2>
+        <p class="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+          Join developers who choose transparency, control, and performance over convenience.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="/docs" 
+            class="inline-flex items-center px-8 py-4 bg-white text-primary-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-lg"
+          >
+            <BookOpen className="h-5 w-5 mr-2" />
+            Browse Documentation
+          </a>
+          <a 
+            href="/playground" 
+            class="inline-flex items-center px-8 py-4 bg-primary-700 text-white font-semibold rounded-lg border border-primary-500 hover:bg-primary-800 transition-colors"
+          >
+            <Terminal className="h-5 w-5 mr-2" />
+            Try Interactive Examples
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <script>
+    // Copy to clipboard functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyButtons = document.querySelectorAll('.copy-btn');
+      
+      copyButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+          const textToCopy = button.getAttribute('data-copy');
+          const copyIcon = button.querySelector('.copy-icon');
+          const checkIcon = button.querySelector('.check-icon');
+          
+          try {
+            await navigator.clipboard.writeText(textToCopy);
+            copyIcon.classList.add('hidden');
+            checkIcon.classList.remove('hidden');
+            
+            setTimeout(() => {
+              copyIcon.classList.remove('hidden');
+              checkIcon.classList.add('hidden');
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy text:', err);
+          }
+        });
+      });
+    });
+  </script>
+</Layout>

@@ -1,0 +1,129 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { registry } from '../../data/registry';
+import { BookOpen, ArrowRight, Package, Zap } from 'lucide-react';
+---
+
+<Layout title="Documentation - forge-utils">
+  <Header />
+  
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Documentation
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          Explore our comprehensive collection of utility functions organized by category. 
+          Each utility is designed to be copied directly into your project for maximum control and customization.
+        </p>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 text-center border border-gray-200 dark:border-gray-700">
+          <div class="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+            {registry.categories.length}
+          </div>
+          <div class="text-gray-600 dark:text-gray-300">Categories</div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 text-center border border-gray-200 dark:border-gray-700">
+          <div class="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+            {registry.utilities.length}
+          </div>
+          <div class="text-gray-600 dark:text-gray-300">Utilities</div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 text-center border border-gray-200 dark:border-gray-700">
+          <div class="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+            100%
+          </div>
+          <div class="text-gray-600 dark:text-gray-300">TypeScript</div>
+        </div>
+      </div>
+
+      <!-- Categories Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {registry.categories.map(category => {
+          const utilities = registry.utilities.filter(u => u.category === category.name);
+          return (
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+              <div class="flex items-center mb-4">
+                <div class="text-3xl mr-3">{category.icon}</div>
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    {category.name.split('-').map(word => 
+                      word.charAt(0).toUpperCase() + word.slice(1)
+                    ).join(' ')}
+                  </h3>
+                  <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <Package className="h-4 w-4 mr-1" />
+                    {utilities.length} utilities
+                  </div>
+                </div>
+              </div>
+              
+              <p class="text-gray-600 dark:text-gray-300 mb-4">
+                {category.description}
+              </p>
+              
+              <div class="space-y-2 mb-6">
+                {utilities.slice(0, 3).map(utility => (
+                  <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                    <Zap className="h-3 w-3 mr-2 text-primary-500" />
+                    {utility.name}
+                  </div>
+                ))}
+                {utilities.length > 3 && (
+                  <div class="text-sm text-gray-500 dark:text-gray-400">
+                    +{utilities.length - 3} more utilities
+                  </div>
+                )}
+              </div>
+              
+              <a 
+                href={`/docs/${category.name}`}
+                class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+              >
+                Explore Category
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </a>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Quick Start -->
+      <div class="mt-16 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-xl p-8">
+        <div class="text-center">
+          <BookOpen className="h-12 w-12 text-primary-600 dark:text-primary-400 mx-auto mb-4" />
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            New to forge-utils?
+          </h2>
+          <p class="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+            Start by installing the CLI tool and initializing your project. 
+            Then browse our categories to find the utilities you need.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a 
+              href="/"
+              class="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              Quick Start Guide
+            </a>
+            <a 
+              href="/playground"
+              class="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              Try Playground
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

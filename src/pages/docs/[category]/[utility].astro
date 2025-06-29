@@ -1,0 +1,341 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import CodeBlock from '../../../components/CodeBlock';
+import { registry, getUtilityByName, getCategoryByName } from '../../../data/registry';
+import { getUtilityContent } from '../../../data/utilities';
+import { ArrowLeft, ArrowRight, Download, GitBranch, Copy, ExternalLink, Play } from 'lucide-react';
+
+export async function getStaticPaths() {
+  const paths = [];
+  
+  for (const utility of registry.utilities) {
+    paths.push({
+      params: { 
+        category: utility.category,
+        utility: utility.name
+      }
+    });
+  }
+  
+  return paths;
+}
+
+const { category, utility } = Astro.params;
+const utilityInfo = getUtilityByName(utility!);
+const categoryInfo = getCategoryByName(category!);
+
+if (!utilityInfo || !categoryInfo) {
+  return Astro.redirect('/docs');
+}
+
+const utilityCode = getUtilityContent(utilityInfo.name);
+---
+
+<Layout title={`${utilityInfo.name} - ${categoryInfo.name} - forge-utils`}>
+  <Header />
+  
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
+        <a href="/docs" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+          Documentation
+        </a>
+        <span>/</span>
+        <a href={`/docs/${categoryInfo.name}`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+          {categoryInfo.name.split('-').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+          ).join(' ')}
+        </a>
+        <span>/</span>
+        <span class="text-gray-900 dark:text-white font-medium">
+          {utilityInfo.name}
+        </span>
+      </nav>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-3">
+          <!-- Utility Header -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 mb-8">
+            <div class="flex items-start justify-between mb-6">
+              <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  {utilityInfo.name}
+                </h1>
+                <p class="text-lg text-gray-600 dark:text-gray-300 mb-4">
+                  {utilityInfo.description}
+                </p>
+                <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                  <span class="flex items-center">
+                    <span class="text-2xl mr-2">{categoryInfo.icon}</span>
+                    {categoryInfo.name}
+                  </span>
+                  <span>•</span>
+                  <span>{utilityInfo.file}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="flex flex-wrap gap-3">
+              <button 
+                class="copy-install-btn inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                data-copy={`forge-utils add ${utilityInfo.name}`}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Install Utility
+              </button>
+              
+              <a 
+                href="/playground"
+                class="inline-flex items-center px-4 py-2 bg-secondary-600 text-white font-medium rounded-lg hover:bg-secondary-700 transition-colors"
+              >
+                <Play className="h-4 w-4 mr-2" />
+                Try in Playground
+              </a>
+              
+              <button 
+                class="copy-code-btn inline-flex items-center px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors"
+                data-copy={utilityCode}
+              >
+                <Copy className="h-4 w-4 mr-2" />
+                Copy Code
+              </button>
+            </div>
+          </div>
+
+          <!-- Dependencies -->
+          {utilityInfo.dependencies.length > 0 && (
+            <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6 mb-8">
+              <div class="flex items-center mb-3">
+                <GitBranch className="h-5 w-5 text-amber-600 dark:text-amber-400 mr-2" />
+                <h3 class="font-semibold text-amber-800 dark:text-amber-200">
+                  Dependencies Required
+                </h3>
+              </div>
+              <p class="text-amber-700 dark:text-amber-300 mb-4">
+                This utility depends on the following functions. They will be automatically installed when you add this utility:
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {utilityInfo.dependencies.map(dep => {
+                  const depUtility = getUtilityByName(dep);
+                  return (
+                    <a 
+                      href={depUtility ? `/docs/${depUtility.category}/${dep}` : '#'}
+                      class="inline-flex items-center px-3 py-1 bg-amber-100 dark:bg-amber-800 text-amber-800 dark:text-amber-200 rounded-full text-sm hover:bg-amber-200 dark:hover:bg-amber-700 transition-colors"
+                    >
+                      {dep}
+                      {depUtility && <ExternalLink className="h-3 w-3 ml-1" />}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <!-- Source Code -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 mb-8">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Source Code
+              </h2>
+            </div>
+            <div class="p-6">
+              <CodeBlock 
+                code={utilityCode}
+                language="typescript"
+                title={utilityInfo.file}
+                client:load
+              />
+            </div>
+          </div>
+
+          <!-- Usage Examples -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 mb-8">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Usage Examples
+              </h2>
+            </div>
+            <div class="p-6">
+              <div class="space-y-6">
+                <!-- Basic Usage -->
+                <div>
+                  <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-3">
+                    Basic Usage
+                  </h3>
+                  <CodeBlock 
+                    code={`import { ${utilityInfo.name} } from './lib/utils/${utilityInfo.category}/${utilityInfo.name}';
+
+// Example usage will be shown here based on the utility
+// This is a placeholder for demonstration`}
+                    language="typescript"
+                    client:load
+                  />
+                </div>
+
+                <!-- Advanced Usage -->
+                <div>
+                  <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-3">
+                    Advanced Example
+                  </h3>
+                  <CodeBlock 
+                    code={`// Advanced usage example
+// This would contain more complex scenarios
+// Specific to each utility function`}
+                    language="typescript"
+                    client:load
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Installation Instructions -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Installation
+              </h2>
+            </div>
+            <div class="p-6">
+              <div class="space-y-4">
+                <div>
+                  <h3 class="font-medium text-gray-900 dark:text-white mb-2">
+                    Using forge-utils CLI (Recommended)
+                  </h3>
+                  <CodeBlock 
+                    code={`forge-utils add ${utilityInfo.name}`}
+                    language="bash"
+                    client:load
+                  />
+                </div>
+                
+                <div>
+                  <h3 class="font-medium text-gray-900 dark:text-white mb-2">
+                    Manual Installation
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                    Copy the source code above and save it as <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm">{utilityInfo.file}</code> in your project.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <div class="sticky top-24 space-y-6">
+            <!-- Quick Info -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-4">
+                Quick Info
+              </h3>
+              <dl class="space-y-3 text-sm">
+                <div>
+                  <dt class="text-gray-500 dark:text-gray-400">Category</dt>
+                  <dd class="text-gray-900 dark:text-white font-medium">
+                    {categoryInfo.name}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-gray-500 dark:text-gray-400">File</dt>
+                  <dd class="text-gray-900 dark:text-white font-mono text-xs">
+                    {utilityInfo.file}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-gray-500 dark:text-gray-400">Dependencies</dt>
+                  <dd class="text-gray-900 dark:text-white">
+                    {utilityInfo.dependencies.length || 'None'}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- Related Utilities -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-4">
+                Related Utilities
+              </h3>
+              <div class="space-y-2">
+                {registry.utilities
+                  .filter(u => u.category === utilityInfo.category && u.name !== utilityInfo.name)
+                  .slice(0, 5)
+                  .map(relatedUtility => (
+                    <a 
+                      href={`/docs/${relatedUtility.category}/${relatedUtility.name}`}
+                      class="block text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+                    >
+                      {relatedUtility.name}
+                    </a>
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="flex justify-between items-center mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <a 
+          href={`/docs/${categoryInfo.name}`}
+          class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to {categoryInfo.name.split('-').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+          ).join(' ')}
+        </a>
+        
+        <a 
+          href="/playground"
+          class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+        >
+          Try in Playground
+          <ArrowRight className="h-4 w-4 ml-1" />
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+
+  <script>
+    // Copy functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyButtons = document.querySelectorAll('.copy-install-btn, .copy-code-btn');
+      
+      copyButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+          const textToCopy = button.getAttribute('data-copy');
+          const originalText = button.innerHTML;
+          
+          try {
+            await navigator.clipboard.writeText(textToCopy);
+            button.innerHTML = button.innerHTML.replace('Install Utility', 'Copied!').replace('Copy Code', 'Copied!');
+            button.classList.add('bg-green-600', 'hover:bg-green-700');
+            button.classList.remove('bg-primary-600', 'hover:bg-primary-700', 'bg-gray-600', 'hover:bg-gray-700');
+            
+            setTimeout(() => {
+              button.innerHTML = originalText;
+              button.classList.remove('bg-green-600', 'hover:bg-green-700');
+              if (button.classList.contains('copy-install-btn')) {
+                button.classList.add('bg-primary-600', 'hover:bg-primary-700');
+              } else {
+                button.classList.add('bg-gray-600', 'hover:bg-gray-700');
+              }
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy:', err);
+          }
+        });
+      });
+    });
+  </script>
+</Layout>

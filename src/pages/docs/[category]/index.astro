@@ -1,0 +1,144 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { registry, getUtilitiesByCategory, getCategoryByName } from '../../../data/registry';
+import { ArrowLeft, ArrowRight, Package, GitBranch, ExternalLink } from 'lucide-react';
+
+export async function getStaticPaths() {
+  return registry.categories.map(category => ({
+    params: { category: category.name }
+  }));
+}
+
+const { category } = Astro.params;
+const categoryInfo = getCategoryByName(category!);
+const utilities = getUtilitiesByCategory(category!);
+
+if (!categoryInfo) {
+  return Astro.redirect('/docs');
+}
+---
+
+<Layout title={`${categoryInfo.name} - Documentation - forge-utils`}>
+  <Header />
+  
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
+        <a href="/docs" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+          Documentation
+        </a>
+        <span>/</span>
+        <span class="text-gray-900 dark:text-white font-medium">
+          {categoryInfo.name.split('-').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+          ).join(' ')}
+        </span>
+      </nav>
+
+      <!-- Category Header -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 mb-8">
+        <div class="flex items-center mb-4">
+          <div class="text-4xl mr-4">{categoryInfo.icon}</div>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+              {categoryInfo.name.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+              ).join(' ')}
+            </h1>
+            <div class="flex items-center text-gray-500 dark:text-gray-400 mt-2">
+              <Package className="h-4 w-4 mr-2" />
+              {utilities.length} utilities in this category
+            </div>
+          </div>
+        </div>
+        
+        <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">
+          {categoryInfo.description}
+        </p>
+
+        <!-- Quick Install -->
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Install all utilities in this category:
+            </span>
+          </div>
+          <code class="text-primary-600 dark:text-primary-400 font-mono">
+            forge-utils add {categoryInfo.name}
+          </code>
+        </div>
+      </div>
+
+      <!-- Utilities Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {utilities.map(utility => (
+          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  {utility.name}
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                  {utility.description}
+                </p>
+              </div>
+            </div>
+
+            {utility.dependencies.length > 0 && (
+              <div class="mb-4">
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <GitBranch className="h-4 w-4 mr-1" />
+                  Dependencies:
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  {utility.dependencies.map(dep => (
+                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded">
+                      {dep}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-gray-500 dark:text-gray-400">
+                {utility.file}
+              </div>
+              <a 
+                href={`/docs/${categoryInfo.name}/${utility.name}`}
+                class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm transition-colors"
+              >
+                View Details
+                <ExternalLink className="h-4 w-4 ml-1" />
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Navigation -->
+      <div class="flex justify-between items-center mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <a 
+          href="/docs"
+          class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Documentation
+        </a>
+        
+        <a 
+          href="/playground"
+          class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+        >
+          Try in Playground
+          <ArrowRight className="h-4 w-4 ml-1" />
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

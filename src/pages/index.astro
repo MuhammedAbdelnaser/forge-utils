@@ -180,6 +180,24 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
         </div>
 
         <div class="max-w-4xl mx-auto">
+          <!-- Language Selection Tabs -->
+          <div class="flex justify-center mb-8">
+            <div class="bg-white dark:bg-gray-700 rounded-lg p-1 border border-gray-200 dark:border-gray-600">
+              <button 
+                class="language-tab active px-4 py-2 rounded-md text-sm font-medium transition-colors bg-primary-600 text-white"
+                data-language="typescript"
+              >
+                TypeScript
+              </button>
+              <button 
+                class="language-tab px-4 py-2 rounded-md text-sm font-medium transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                data-language="javascript"
+              >
+                JavaScript
+              </button>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Installation Steps -->
             <div class="space-y-6">
@@ -206,8 +224,12 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
                     Initialize in your project
                   </h3>
                   <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
-                    <code class="text-green-400 font-mono">own-kit init --typescript</code>
+                    <code class="init-command text-green-400 font-mono">own-kit init --typescript</code>
                   </div>
+                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    <span class="typescript-note">Use <code class="bg-gray-200 dark:bg-gray-600 px-1 rounded">--typescript</code> for TypeScript support</span>
+                    <span class="javascript-note hidden">Omit <code class="bg-gray-200 dark:bg-gray-600 px-1 rounded">--typescript</code> for JavaScript</span>
+                  </p>
                 </div>
               </div>
 
@@ -234,7 +256,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
                     Use in your code
                   </h3>
                   <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
-                    <code class="text-green-400 font-mono text-sm">
+                    <code class="import-example text-green-400 font-mono text-sm">
                       import { dataURItoFile } from './src/utils/file-handling/dataURItoFile'
                     </code>
                   </div>
@@ -247,7 +269,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Example Usage
               </h3>
-              <pre class="language-typescript text-sm overflow-x-auto"><code class="language-typescript">// After adding the utility
+              <pre class="language-typescript text-sm overflow-x-auto"><code class="example-code language-typescript">// After adding the utility
 import { dataURItoFile } from './src/utils/file-handling/dataURItoFile';
 
 // Convert data URI to File
@@ -302,7 +324,14 @@ formData.append('file', file);</code></pre>
     function dataURItoFile(dataURI, filename) {
       // Split the data URI to get the mime type and data
       const arr = dataURI.split(',');
-      const mime = arr[0].match(/:(.*?);/)[1];
+      
+      if (arr.length !== 2) {
+        throw new Error('Invalid data URI format');
+      }
+      
+      const mimeMatch = arr[0].match(/:(.*?);/);
+      const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+      
       const bstr = atob(arr[1]);
       let n = bstr.length;
       const u8arr = new Uint8Array(n);
@@ -314,8 +343,82 @@ formData.append('file', file);</code></pre>
       return new File([u8arr], filename, { type: mime });
     }
 
-    // Copy to clipboard functionality
+    // Language switching functionality
     document.addEventListener('DOMContentLoaded', () => {
+      const languageTabs = document.querySelectorAll('.language-tab');
+      const initCommand = document.querySelector('.init-command');
+      const importExample = document.querySelector('.import-example');
+      const exampleCode = document.querySelector('.example-code');
+      const typescriptNote = document.querySelector('.typescript-note');
+      const javascriptNote = document.querySelector('.javascript-note');
+
+      const content = {
+        typescript: {
+          init: 'own-kit init --typescript',
+          import: "import { dataURItoFile } from './src/utils/file-handling/dataURItoFile'",
+          example: `// After adding the utility
+import { dataURItoFile } from './src/utils/file-handling/dataURItoFile';
+
+// Convert data URI to File
+const dataURI = 'data:text/plain;base64,SGVsbG8gV29ybGQ=';
+const file: File = dataURItoFile(dataURI, 'hello.txt');
+
+console.log(file.name); // 'hello.txt'
+console.log(file.type); // 'text/plain'
+
+// Use with FormData
+const formData = new FormData();
+formData.append('file', file);`
+        },
+        javascript: {
+          init: 'own-kit init',
+          import: "const { dataURItoFile } = require('./src/utils/file-handling/dataURItoFile')",
+          example: `// After adding the utility
+const { dataURItoFile } = require('./src/utils/file-handling/dataURItoFile');
+
+// Convert data URI to File
+const dataURI = 'data:text/plain;base64,SGVsbG8gV29ybGQ=';
+const file = dataURItoFile(dataURI, 'hello.txt');
+
+console.log(file.name); // 'hello.txt'
+console.log(file.type); // 'text/plain'
+
+// Use with FormData
+const formData = new FormData();
+formData.append('file', file);`
+        }
+      };
+
+      languageTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const language = tab.getAttribute('data-language');
+          
+          // Update tab styles
+          languageTabs.forEach(t => {
+            t.classList.remove('active', 'bg-primary-600', 'text-white');
+            t.classList.add('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-600');
+          });
+          
+          tab.classList.add('active', 'bg-primary-600', 'text-white');
+          tab.classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-600');
+          
+          // Update content
+          if (initCommand) initCommand.textContent = content[language].init;
+          if (importExample) importExample.textContent = content[language].import;
+          if (exampleCode) exampleCode.textContent = content[language].example;
+          
+          // Update notes
+          if (language === 'typescript') {
+            typescriptNote?.classList.remove('hidden');
+            javascriptNote?.classList.add('hidden');
+          } else {
+            typescriptNote?.classList.add('hidden');
+            javascriptNote?.classList.remove('hidden');
+          }
+        });
+      });
+
+      // Copy to clipboard functionality
       const copyButtons = document.querySelectorAll('.copy-btn');
       
       copyButtons.forEach(button => {
@@ -326,12 +429,12 @@ formData.append('file', file);</code></pre>
           
           try {
             await navigator.clipboard.writeText(textToCopy);
-            copyIcon.classList.add('hidden');
-            checkIcon.classList.remove('hidden');
+            copyIcon?.classList.add('hidden');
+            checkIcon?.classList.remove('hidden');
             
             setTimeout(() => {
-              copyIcon.classList.remove('hidden');
-              checkIcon.classList.add('hidden');
+              copyIcon?.classList.remove('hidden');
+              checkIcon?.classList.add('hidden');
             }, 2000);
           } catch (err) {
             console.error('Failed to copy text:', err);

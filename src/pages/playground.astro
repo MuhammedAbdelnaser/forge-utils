@@ -31,10 +31,28 @@ import { Play, Code, Download, RefreshCw } from 'lucide-react';
               class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             >
               <option value="">Select a utility...</option>
-              <option value="dataURItoFile">dataURItoFile</option>
-              <option value="preventInteractionsOutsideOf">preventInteractionsOutsideOf</option>
-              <option value="queryFocusable">queryFocusable</option>
-              <option value="isElementScrollable">isElementScrollable</option>
+              <optgroup label="File Handling">
+                <option value="dataURItoFile">dataURItoFile</option>
+              </optgroup>
+              <optgroup label="DOM Manipulation">
+                <option value="addScrollEventListener">addScrollEventListener</option>
+                <option value="focusWithin">focusWithin</option>
+                <option value="getDocumentHeight">getDocumentHeight</option>
+                <option value="getVerticalScrollParent">getVerticalScrollParent</option>
+                <option value="hasRoomForMore">hasRoomForMore</option>
+                <option value="isElementScrollable">isElementScrollable</option>
+                <option value="isScrolledPastHalfWay">isScrolledPastHalfWay</option>
+                <option value="isScrolledToBottom">isScrolledToBottom</option>
+                <option value="isTargetFixed">isTargetFixed</option>
+                <option value="onThisKeyDown">onThisKeyDown</option>
+                <option value="preventFocusOut">preventFocusOut</option>
+                <option value="preventInteractionsOutsideOf">preventInteractionsOutsideOf</option>
+                <option value="queryFocusable">queryFocusable</option>
+                <option value="remainingScrollAreaShorterThanHeight">remainingScrollAreaShorterThanHeight</option>
+                <option value="scrollIntoView">scrollIntoView</option>
+                <option value="selectNodeTextContents">selectNodeTextContents</option>
+                <option value="submitParentForm">submitParentForm</option>
+              </optgroup>
             </select>
             
             <button 
@@ -167,6 +185,42 @@ import { Play, Code, Download, RefreshCw } from 'lucide-react';
               Try queryFocusable →
             </div>
           </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer example-card" data-utility="addScrollEventListener">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+              Scroll Event Handling
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+              Add scroll listeners with proper cleanup
+            </p>
+            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium">
+              Try addScrollEventListener →
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer example-card" data-utility="isElementScrollable">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+              Scroll Detection
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+              Check if elements have scrollable content
+            </p>
+            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium">
+              Try isElementScrollable →
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer example-card" data-utility="onThisKeyDown">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2">
+              Keyboard Events
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+              Listen for specific key presses with cleanup
+            </p>
+            <div class="text-primary-600 dark:text-primary-400 text-sm font-medium">
+              Try onThisKeyDown →
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -225,106 +279,73 @@ function dataURItoFile(dataURI, filename) {
   return new File([u8arr], filename, { type: mime });
 }`,
 
-      preventInteractionsOutsideOf: `// Create a modal demonstration
-const modal = document.createElement('div');
-modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-modal.innerHTML = \`
-  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
-    <h3 class="text-lg font-semibold mb-4">Modal Example</h3>
-    <p class="text-gray-600 dark:text-gray-300 mb-4">
-      Try tabbing or scrolling - interactions are trapped within this modal!
-    </p>
-    <div class="space-y-2">
-      <input type="text" placeholder="First input" class="w-full p-2 border rounded">
-      <input type="text" placeholder="Second input" class="w-full p-2 border rounded">
-      <button id="close-modal" class="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700">
-        Close Modal
-      </button>
-    </div>
-  </div>
-\`;
-
-document.body.appendChild(modal);
-
-// Apply interaction prevention
-const cleanup = preventInteractionsOutsideOf(modal.firstElementChild);
-
-console.log('Modal created with interaction prevention');
-console.log('Try tabbing or scrolling - interactions are trapped!');
-
-// Close modal functionality
-document.getElementById('close-modal').addEventListener('click', () => {
-  cleanup();
-  document.body.removeChild(modal);
-  console.log('Modal closed and interactions restored');
-});
-
-// Simplified version of the utility for demo
-function preventInteractionsOutsideOf(container) {
-  const handleKeyDown = (e) => {
-    if (e.key === 'Tab') {
-      const focusables = container.querySelectorAll('input, button, [tabindex]:not([tabindex="-1"])');
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    }
-  };
-  
-  document.addEventListener('keydown', handleKeyDown);
-  
-  return () => {
-    document.removeEventListener('keydown', handleKeyDown);
-  };
-}`,
-
-      queryFocusable: `// Create a test container with various elements
+      addScrollEventListener: `// Create a scrollable container and add scroll listener
 const container = document.createElement('div');
-container.className = 'p-4 border border-gray-300 rounded-lg space-y-2';
+container.className = 'h-48 overflow-y-auto border border-gray-300 p-4 bg-gray-50';
 container.innerHTML = \`
-  <h3 class="font-semibold mb-2">Test Container</h3>
-  <input type="text" placeholder="Text input" class="block w-full p-2 border rounded">
-  <button class="bg-blue-500 text-white px-3 py-1 rounded">Button</button>
-  <a href="#" class="text-blue-600 underline block">Link</a>
-  <select class="block p-2 border rounded">
-    <option>Option 1</option>
-    <option>Option 2</option>
-  </select>
-  <textarea placeholder="Textarea" class="block w-full p-2 border rounded h-20"></textarea>
-  <div tabindex="0" class="p-2 bg-gray-100 rounded cursor-pointer">Focusable div</div>
-  <button disabled class="bg-gray-300 text-gray-500 px-3 py-1 rounded cursor-not-allowed">Disabled button</button>
-  <input type="hidden" value="hidden">
+  <h3 class="font-semibold mb-2">Scrollable Content</h3>
+  <p>Scroll this container to see the event listener in action!</p>
+  \${'<p>Line of content</p>'.repeat(20)}
 \`;
 
 document.getElementById('visual-output').innerHTML = '';
 document.getElementById('visual-output').appendChild(container);
 
-// Find focusable elements
-const focusableElements = queryFocusable(container);
+// Add scroll event listener
+const cleanup = addScrollEventListener(container, (e) => {
+  console.log('Scroll position:', e.target.scrollTop);
+  console.log('Scroll percentage:', Math.round((e.target.scrollTop / (e.target.scrollHeight - e.target.clientHeight)) * 100) + '%');
+});
 
-console.log('Container created with various elements');
-console.log('Found', focusableElements.length, 'focusable elements:');
+console.log('Scroll event listener added');
+console.log('Try scrolling the container above!');
 
-focusableElements.forEach((element, index) => {
-  console.log(\`\${index + 1}. \${element.tagName.toLowerCase()}\${element.type ? '[' + element.type + ']' : ''}\`);
+// Cleanup after 10 seconds for demo
+setTimeout(() => {
+  cleanup();
+  console.log('Scroll listener removed after 10 seconds');
+}, 10000);
+
+function getEventTarget(element) {
+  if (element instanceof Element && 
+      element.ownerDocument && 
+      element === element.ownerDocument.documentElement) {
+    return element.ownerDocument;
+  }
+  return element;
+}
+
+function addScrollEventListener(element, onScroll) {
+  const target = getEventTarget(element);
+  target.addEventListener('scroll', onScroll, { passive: true });
   
-  // Add visual indicator
-  element.style.outline = '2px solid #3b82f6';
-  element.style.outlineOffset = '2px';
+  return () => {
+    target.removeEventListener('scroll', onScroll);
+  };
+}`,
+
+      focusWithin: `// Create a container with focusable elements
+const container = document.createElement('div');
+container.className = 'p-4 border border-gray-300 rounded-lg space-y-2 bg-blue-50';
+container.innerHTML = \`
+  <h3 class="font-semibold mb-2">Focus Container</h3>
+  <input type="text" placeholder="First input" class="block w-full p-2 border rounded">
+  <button class="bg-blue-500 text-white px-3 py-1 rounded">Button</button>
+  <input type="text" placeholder="Second input" class="block w-full p-2 border rounded">
+  <button id="focus-within-btn" class="bg-green-500 text-white px-3 py-1 rounded">Focus Within</button>
+\`;
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(container);
+
+// Add click handler to test focusWithin
+document.getElementById('focus-within-btn').addEventListener('click', () => {
+  focusWithin(container);
+  console.log('focusWithin called - first focusable element should be focused');
 });
 
-// Add focus event listeners for demonstration
-focusableElements.forEach((element, index) => {
-  element.addEventListener('focus', () => {
-    console.log(\`Focused element \${index + 1}: \${element.tagName.toLowerCase()}\`);
-  });
-});
+console.log('Container created with focusable elements');
+console.log('Click "Focus Within" button to focus the first element');
 
 function queryFocusable(element) {
   const focusableSelectors = [
@@ -346,6 +367,220 @@ function queryFocusable(element) {
       node.tabIndex >= 0
     );
   });
+}
+
+function focusWithin(element, options = {}) {
+  if (!element?.contains) {
+    console.warn('focusWithin: Invalid element provided');
+    return;
+  }
+
+  const activeElement = document.activeElement;
+  if (activeElement && element.contains(activeElement)) {
+    return;
+  }
+
+  const { focusFirst } = options;
+  const elements = queryFocusable(element);
+  
+  if (elements.length === 0) {
+    return;
+  }
+
+  const elementToFocus = (focusFirst && elements.includes(focusFirst))
+    ? focusFirst 
+    : elements[0];
+    
+  elementToFocus?.focus();
+}`,
+
+      getDocumentHeight: `// Get and display document height information
+const height = getDocumentHeight();
+
+console.log('Document height:', height + 'px');
+console.log('Window height:', window.innerHeight + 'px');
+console.log('Viewport height:', document.documentElement.clientHeight + 'px');
+
+// Create visual representation
+const info = document.createElement('div');
+info.className = 'p-4 bg-blue-50 rounded-lg space-y-2';
+info.innerHTML = \`
+  <h3 class="font-semibold text-lg mb-3">Document Height Information</h3>
+  <div class="grid grid-cols-2 gap-4 text-sm">
+    <div class="bg-white p-3 rounded border">
+      <div class="font-medium text-blue-600">Document Height</div>
+      <div class="text-2xl font-bold">\${height}px</div>
+    </div>
+    <div class="bg-white p-3 rounded border">
+      <div class="font-medium text-green-600">Window Height</div>
+      <div class="text-2xl font-bold">\${window.innerHeight}px</div>
+    </div>
+    <div class="bg-white p-3 rounded border">
+      <div class="font-medium text-purple-600">Viewport Height</div>
+      <div class="text-2xl font-bold">\${document.documentElement.clientHeight}px</div>
+    </div>
+    <div class="bg-white p-3 rounded border">
+      <div class="font-medium text-orange-600">Body Height</div>
+      <div class="text-2xl font-bold">\${document.body.scrollHeight}px</div>
+    </div>
+  </div>
+  <div class="mt-3 p-3 bg-yellow-100 rounded text-sm">
+    <strong>Note:</strong> Document height is the maximum of all height measurements
+  </div>
+\`;
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(info);
+
+function getDocumentHeight(doc = document) {
+  const body = doc.body;
+  const html = doc.documentElement;
+
+  if (!body || !html) {
+    console.warn('getDocumentHeight: Invalid document structure');
+    return 0;
+  }
+
+  return Math.max(
+    body.scrollHeight,
+    body.offsetHeight,
+    html.clientHeight,
+    html.scrollHeight,
+    html.offsetHeight
+  );
+}`,
+
+      getVerticalScrollParent: `// Create nested containers to test scroll parent detection
+const outerContainer = document.createElement('div');
+outerContainer.className = 'h-32 overflow-y-auto border-2 border-blue-500 p-2 bg-blue-50';
+
+const innerContainer = document.createElement('div');
+innerContainer.className = 'h-24 overflow-y-auto border-2 border-green-500 p-2 bg-green-50 mt-2';
+
+const targetElement = document.createElement('div');
+targetElement.className = 'h-40 bg-red-100 border border-red-300 p-2';
+targetElement.innerHTML = \`
+  <h4 class="font-semibold text-red-700">Target Element</h4>
+  <p class="text-sm">This element will be used to find its scroll parent</p>
+  <button id="find-parent-btn" class="mt-2 bg-red-500 text-white px-3 py-1 rounded text-sm">
+    Find Scroll Parent
+  </button>
+\`;
+
+// Add content to make containers scrollable
+outerContainer.innerHTML = \`
+  <h3 class="font-semibold text-blue-700">Outer Scrollable Container</h3>
+  <p class="text-sm">This is the outer scrollable container</p>
+\`;
+
+innerContainer.innerHTML = \`
+  <h4 class="font-semibold text-green-700">Inner Scrollable Container</h4>
+  <p class="text-sm">This is the inner scrollable container</p>
+\`;
+
+innerContainer.appendChild(targetElement);
+outerContainer.appendChild(innerContainer);
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(outerContainer);
+
+// Add click handler
+document.getElementById('find-parent-btn').addEventListener('click', () => {
+  const scrollParent = getVerticalScrollParent(targetElement);
+  
+  if (scrollParent === innerContainer) {
+    console.log('✓ Found scroll parent: Inner container (green border)');
+    innerContainer.style.borderColor = '#10b981';
+    innerContainer.style.borderWidth = '3px';
+  } else if (scrollParent === outerContainer) {
+    console.log('✓ Found scroll parent: Outer container (blue border)');
+    outerContainer.style.borderColor = '#3b82f6';
+    outerContainer.style.borderWidth = '3px';
+  } else {
+    console.log('✓ Found scroll parent:', scrollParent === window ? 'Window' : scrollParent === document ? 'Document' : 'Other element');
+  }
+});
+
+console.log('Nested containers created');
+console.log('Click "Find Scroll Parent" to see which container is the scroll parent');
+
+function getVerticalScrollParent(element) {
+  if (element === window || element === document) {
+    return element;
+  }
+
+  if (!(element instanceof Element)) {
+    return window;
+  }
+
+  const computedStyle = window.getComputedStyle(element);
+  const overflow = computedStyle.getPropertyValue('overflow');
+  
+  if (overflow === 'auto' || overflow === 'scroll') {
+    return element;
+  }
+  
+  const overflowY = computedStyle.getPropertyValue('overflow-y');
+  if (overflowY === 'auto' || overflowY === 'scroll') {
+    return element;
+  }
+  
+  return getVerticalScrollParent(element.parentElement || document.body);
+}`,
+
+      hasRoomForMore: `// Create containers with different content amounts
+const containers = [
+  { name: 'Has Room', hasRoom: true },
+  { name: 'No Room', hasRoom: false }
+];
+
+const wrapper = document.createElement('div');
+wrapper.className = 'space-y-4';
+
+containers.forEach(({ name, hasRoom }) => {
+  const container = document.createElement('div');
+  container.className = 'h-24 border border-gray-300 p-2 bg-gray-50 overflow-hidden';
+  
+  const content = hasRoom 
+    ? '<p>This container has room for more content</p>'
+    : '<p>This container is full</p>'.repeat(10);
+    
+  container.innerHTML = \`
+    <h4 class="font-semibold mb-2">\${name}</h4>
+    \${content}
+  \`;
+  
+  const testButton = document.createElement('button');
+  testButton.className = 'mt-2 bg-blue-500 text-white px-3 py-1 rounded text-sm';
+  testButton.textContent = 'Test hasRoomForMore';
+  testButton.addEventListener('click', () => {
+    const result = hasRoomForMore(container);
+    console.log(\`\${name}: \${result ? 'HAS ROOM' : 'NO ROOM'}\`);
+    
+    // Visual feedback
+    container.style.borderColor = result ? '#10b981' : '#ef4444';
+    container.style.borderWidth = '2px';
+  });
+  
+  const containerWrapper = document.createElement('div');
+  containerWrapper.appendChild(container);
+  containerWrapper.appendChild(testButton);
+  wrapper.appendChild(containerWrapper);
+});
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(wrapper);
+
+console.log('Containers created with different content amounts');
+console.log('Click "Test hasRoomForMore" buttons to check each container');
+
+function hasRoomForMore(element) {
+  if (!(element instanceof Element)) {
+    console.warn('hasRoomForMore: Invalid element provided');
+    return false;
+  }
+
+  return element.scrollHeight <= element.clientHeight;
 }`,
 
       isElementScrollable: `// Create test elements with different scroll behaviors
@@ -405,6 +640,1053 @@ function isElementScrollable(element) {
   }
   
   return element.scrollHeight > element.clientHeight;
+}`,
+
+      isScrolledPastHalfWay: `// Create a scrollable container to test halfway detection
+const container = document.createElement('div');
+container.className = 'h-48 overflow-y-auto border border-gray-300 p-4 bg-gray-50';
+container.innerHTML = \`
+  <h3 class="font-semibold mb-2">Scroll Past Halfway Test</h3>
+  <p class="mb-2">Scroll down to test the halfway detection!</p>
+  \${'<p class="mb-2">Content line</p>'.repeat(30)}
+  <p class="font-semibold text-green-600">🎉 You reached the end!</p>
+\`;
+
+const indicator = document.createElement('div');
+indicator.className = 'mt-2 p-3 bg-blue-100 rounded text-center font-medium';
+indicator.textContent = 'Scroll Status: At Top';
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(container);
+document.getElementById('visual-output').appendChild(indicator);
+
+// Add scroll listener to test in real-time
+container.addEventListener('scroll', () => {
+  const isPastHalf = isScrolledPastHalfWay(container);
+  const percentage = Math.round((container.scrollTop / (container.scrollHeight - container.clientHeight)) * 100);
+  
+  indicator.textContent = \`Scroll Status: \${percentage}% - \${isPastHalf ? 'Past Halfway ✓' : 'Before Halfway'}\`;
+  indicator.className = \`mt-2 p-3 rounded text-center font-medium \${
+    isPastHalf 
+      ? 'bg-green-100 text-green-800' 
+      : 'bg-blue-100 text-blue-800'
+  }\`;
+  
+  console.log(\`Scroll: \${percentage}% - Past halfway: \${isPastHalf}\`);
+});
+
+console.log('Scrollable container created');
+console.log('Scroll the container to see real-time halfway detection');
+
+function isScrolledPastHalfWay(element) {
+  if (!(element instanceof Element)) {
+    console.warn('isScrolledPastHalfWay: Invalid element provided');
+    return false;
+  }
+
+  return element.scrollTop > (element.scrollHeight / 2);
+}`,
+
+      isScrolledToBottom: `// Create a scrollable container to test bottom detection
+const container = document.createElement('div');
+container.className = 'h-48 overflow-y-auto border border-gray-300 p-4 bg-gray-50';
+container.innerHTML = \`
+  <h3 class="font-semibold mb-2">Scroll to Bottom Test</h3>
+  <p class="mb-2">Scroll down to reach the bottom!</p>
+  \${'<p class="mb-2">Content line</p>'.repeat(25)}
+  <p class="font-semibold text-green-600">🎉 You reached the bottom!</p>
+\`;
+
+const indicator = document.createElement('div');
+indicator.className = 'mt-2 p-3 bg-blue-100 rounded text-center font-medium';
+indicator.textContent = 'Scroll Status: Not at Bottom';
+
+const bufferInput = document.createElement('input');
+bufferInput.type = 'number';
+bufferInput.value = '10';
+bufferInput.min = '0';
+bufferInput.max = '50';
+bufferInput.className = 'mt-2 p-2 border rounded w-20';
+
+const bufferLabel = document.createElement('label');
+bufferLabel.className = 'block text-sm font-medium mt-2';
+bufferLabel.innerHTML = 'Buffer (px): ';
+bufferLabel.appendChild(bufferInput);
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(container);
+document.getElementById('visual-output').appendChild(indicator);
+document.getElementById('visual-output').appendChild(bufferLabel);
+
+// Add scroll listener to test in real-time
+function updateBottomStatus() {
+  const buffer = parseInt(bufferInput.value) || 0;
+  const isAtBottom = isScrolledToBottom(container, buffer);
+  const percentage = Math.round((container.scrollTop / (container.scrollHeight - container.clientHeight)) * 100);
+  
+  indicator.textContent = \`Scroll: \${percentage}% - \${isAtBottom ? 'At Bottom ✓' : 'Not at Bottom'} (buffer: \${buffer}px)\`;
+  indicator.className = \`mt-2 p-3 rounded text-center font-medium \${
+    isAtBottom 
+      ? 'bg-green-100 text-green-800' 
+      : 'bg-blue-100 text-blue-800'
+  }\`;
+  
+  console.log(\`Scroll: \${percentage}% - At bottom: \${isAtBottom} (buffer: \${buffer}px)\`);
+}
+
+container.addEventListener('scroll', updateBottomStatus);
+bufferInput.addEventListener('input', updateBottomStatus);
+
+console.log('Scrollable container created with buffer control');
+console.log('Scroll to the bottom and adjust buffer to see detection changes');
+
+function isScrolledToBottom(element, buffer = 0) {
+  if (!(element instanceof Element)) {
+    console.warn('isScrolledToBottom: Invalid element provided');
+    return false;
+  }
+
+  const { scrollHeight, clientHeight, scrollTop } = element;
+  const scrollBottom = clientHeight + scrollTop;
+  const delta = Math.abs(scrollHeight - scrollBottom);
+  
+  return delta <= buffer;
+}`,
+
+      isTargetFixed: `// Create elements with different positioning
+const testContainer = document.createElement('div');
+testContainer.className = 'space-y-4';
+
+const elements = [
+  { name: 'Static Element', style: 'position: static; padding: 1rem; border: 2px solid gray; background: #f9f9f9;' },
+  { name: 'Fixed Element', style: 'position: fixed; top: 10px; right: 10px; padding: 0.5rem; border: 2px solid blue; background: #e0f2fe; z-index: 1000;' },
+  { name: 'Sticky Element', style: 'position: sticky; top: 0; padding: 1rem; border: 2px solid green; background: #f0fdf4;' }
+];
+
+elements.forEach(({ name, style }) => {
+  const element = document.createElement('div');
+  element.style.cssText = style;
+  element.innerHTML = \`
+    <h4 class="font-semibold">\${name}</h4>
+    <button class="test-fixed-btn mt-2 bg-purple-500 text-white px-3 py-1 rounded text-sm">
+      Test isTargetFixed
+    </button>
+  \`;
+  
+  const testBtn = element.querySelector('.test-fixed-btn');
+  testBtn.addEventListener('click', () => {
+    const isFixed = isTargetFixed(element);
+    console.log(\`\${name}: \${isFixed ? 'IS FIXED/STICKY' : 'NOT FIXED'}\`);
+    
+    // Visual feedback
+    element.style.borderColor = isFixed ? '#10b981' : '#ef4444';
+    element.style.borderWidth = '3px';
+    
+    setTimeout(() => {
+      element.style.borderWidth = '2px';
+    }, 2000);
+  });
+  
+  if (name !== 'Fixed Element') {
+    testContainer.appendChild(element);
+  } else {
+    document.body.appendChild(element);
+    // Add to cleanup list
+    setTimeout(() => {
+      if (document.body.contains(element)) {
+        document.body.removeChild(element);
+      }
+    }, 15000);
+  }
+});
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(testContainer);
+
+console.log('Elements with different positioning created');
+console.log('Click "Test isTargetFixed" buttons to check positioning');
+console.log('Note: Fixed element appears in top-right corner of page');
+
+function isTargetFixed(target) {
+  if (!target || target === document.body || target === document.documentElement) {
+    return false;
+  }
+
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  const computedStyle = window.getComputedStyle(target);
+  const { position, top } = computedStyle;
+
+  if (position === 'fixed') {
+    return true;
+  }
+
+  if (position === 'sticky') {
+    const stickyTop = parseInt(top, 10) || 0;
+    const rect = target.getBoundingClientRect();
+    return rect.top <= stickyTop;
+  }
+
+  if (target.parentElement) {
+    return isTargetFixed(target.parentElement);
+  }
+
+  return false;
+}`,
+
+      onThisKeyDown: `// Create input elements to test key detection
+const container = document.createElement('div');
+container.className = 'space-y-4 p-4 bg-gray-50 rounded';
+
+const input1 = document.createElement('input');
+input1.type = 'text';
+input1.placeholder = 'Press Enter here';
+input1.className = 'w-full p-2 border rounded';
+
+const input2 = document.createElement('input');
+input2.type = 'text';
+input2.placeholder = 'Press Escape here';
+input2.className = 'w-full p-2 border rounded';
+
+const textarea = document.createElement('textarea');
+textarea.placeholder = 'Press Space here';
+textarea.className = 'w-full p-2 border rounded h-20';
+
+const keyLog = document.createElement('div');
+keyLog.className = 'p-3 bg-white border rounded h-32 overflow-y-auto font-mono text-sm';
+keyLog.innerHTML = '<div class="text-gray-500">Key events will appear here...</div>';
+
+container.innerHTML = \`
+  <h3 class="font-semibold">Key Event Listeners Test</h3>
+  <p class="text-sm text-gray-600">Try pressing the specified keys in each input:</p>
+\`;
+
+container.appendChild(input1);
+container.appendChild(input2);
+container.appendChild(textarea);
+container.appendChild(keyLog);
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(container);
+
+// Add key listeners
+const cleanup1 = onThisKeyDown(input1, 'Enter', () => {
+  const message = 'Enter key pressed in first input!';
+  console.log(message);
+  addToKeyLog(message);
+});
+
+const cleanup2 = onThisKeyDown(input2, 'Escape', () => {
+  const message = 'Escape key pressed in second input!';
+  console.log(message);
+  addToKeyLog(message);
+});
+
+const cleanup3 = onThisKeyDown(textarea, 'Space', () => {
+  const message = 'Space key pressed in textarea!';
+  console.log(message);
+  addToKeyLog(message);
+});
+
+function addToKeyLog(message) {
+  if (keyLog.innerHTML.includes('Key events will appear here')) {
+    keyLog.innerHTML = '';
+  }
+  const entry = document.createElement('div');
+  entry.textContent = \`[\${new Date().toLocaleTimeString()}] \${message}\`;
+  keyLog.appendChild(entry);
+  keyLog.scrollTop = keyLog.scrollHeight;
+}
+
+console.log('Key event listeners added');
+console.log('Try pressing Enter, Escape, and Space in the respective inputs');
+
+// Cleanup after 30 seconds
+setTimeout(() => {
+  cleanup1();
+  cleanup2();
+  cleanup3();
+  console.log('Key listeners cleaned up after 30 seconds');
+}, 30000);
+
+function onThisKeyDown(element, code, handler) {
+  if (!element?.addEventListener) {
+    console.warn('onThisKeyDown: Invalid element provided');
+    return () => {};
+  }
+
+  const onKeyDown = (event) => {
+    if (event.code === code) {
+      handler();
+    }
+  };
+
+  element.addEventListener('keydown', onKeyDown);
+  
+  return () => {
+    element.removeEventListener('keydown', onKeyDown);
+  };
+}`,
+
+      preventFocusOut: `// Create a modal with focus trap
+const modal = document.createElement('div');
+modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+modal.innerHTML = \`
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4 modal-content">
+    <h3 class="text-lg font-semibold mb-4">Focus Trap Modal</h3>
+    <p class="text-gray-600 dark:text-gray-300 mb-4">
+      Try tabbing or clicking outside - focus is trapped within this modal!
+    </p>
+    <div class="space-y-2">
+      <input type="text" placeholder="First input" class="w-full p-2 border rounded">
+      <input type="text" placeholder="Second input" class="w-full p-2 border rounded">
+      <select class="w-full p-2 border rounded">
+        <option>Option 1</option>
+        <option>Option 2</option>
+      </select>
+      <div class="flex space-x-2">
+        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          Action
+        </button>
+        <button id="close-modal" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+          Close Modal
+        </button>
+      </div>
+    </div>
+  </div>
+\`;
+
+document.body.appendChild(modal);
+
+// Apply focus trap
+const modalContent = modal.querySelector('.modal-content');
+const cleanup = preventFocusOut(modalContent);
+
+console.log('Modal created with focus trap');
+console.log('Try tabbing through elements - focus stays within modal');
+console.log('Try clicking outside the modal - focus returns to modal');
+
+// Close modal functionality
+document.getElementById('close-modal').addEventListener('click', () => {
+  cleanup();
+  document.body.removeChild(modal);
+  console.log('Modal closed and focus trap removed');
+});
+
+// Auto-close after 15 seconds
+setTimeout(() => {
+  if (document.body.contains(modal)) {
+    cleanup();
+    document.body.removeChild(modal);
+    console.log('Modal auto-closed after 15 seconds');
+  }
+}, 15000);
+
+function queryFocusable(element) {
+  const focusableSelectors = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(',');
+  
+  const nodeList = element.querySelectorAll(focusableSelectors);
+  
+  return Array.from(nodeList).filter(node => {
+    const style = window.getComputedStyle(node);
+    return (
+      style.display !== 'none' &&
+      style.visibility !== 'hidden' &&
+      node.tabIndex >= 0
+    );
+  });
+}
+
+function focusWithin(element, options = {}) {
+  if (!element?.contains) {
+    console.warn('focusWithin: Invalid element provided');
+    return;
+  }
+
+  const activeElement = document.activeElement;
+  if (activeElement && element.contains(activeElement)) {
+    return;
+  }
+
+  const { focusFirst } = options;
+  const elements = queryFocusable(element);
+  
+  if (elements.length === 0) {
+    return;
+  }
+
+  const elementToFocus = (focusFirst && elements.includes(focusFirst))
+    ? focusFirst 
+    : elements[0];
+    
+  elementToFocus?.focus();
+}
+
+function preventFocusOut(container, options = {}) {
+  const { onFocus = focusWithin } = options;
+  
+  if (!container?.contains) {
+    console.warn('preventFocusOut: Invalid container provided');
+    return () => {};
+  }
+
+  const isInside = (element) => 
+    element ? container.contains(element) : false;
+  
+  const isFocusInside = () => isInside(document.activeElement);
+
+  const ensureFocusedIn = (event) => {
+    if (isFocusInside()) return;
+    
+    onFocus(container);
+    if (event) {
+      event.preventDefault();
+    }
+  };
+
+  const preventKeyLeaks = (event) => {
+    const { target, key, shiftKey } = event;
+    
+    if (key !== 'Tab') return;
+    
+    if (!isInside(target)) {
+      onFocus(container);
+      event.preventDefault();
+      return;
+    }
+
+    const focusables = queryFocusable(container);
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const [edge, next] = shiftKey ? [first, last] : [last, first];
+
+    if (edge === target) {
+      next.focus();
+      event.preventDefault();
+    }
+  };
+
+  ensureFocusedIn();
+
+  container.addEventListener('keydown', preventKeyLeaks);
+  document.addEventListener('focusin', ensureFocusedIn);
+
+  return () => {
+    container.removeEventListener('keydown', preventKeyLeaks);
+    document.removeEventListener('focusin', ensureFocusedIn);
+  };
+}`,
+
+      preventInteractionsOutsideOf: `// Create a modal demonstration with full interaction prevention
+const modal = document.createElement('div');
+modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+modal.innerHTML = \`
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4 modal-content">
+    <h3 class="text-lg font-semibold mb-4">Interaction Prevention Modal</h3>
+    <p class="text-gray-600 dark:text-gray-300 mb-4">
+      Try tabbing, scrolling, or clicking outside - all interactions are trapped!
+    </p>
+    <div class="space-y-2">
+      <input type="text" placeholder="First input" class="w-full p-2 border rounded">
+      <input type="text" placeholder="Second input" class="w-full p-2 border rounded">
+      <div class="h-20 overflow-y-auto border p-2 bg-gray-50">
+        <p>Scrollable content inside modal</p>
+        \${'<p>Line of content</p>'.repeat(10)}
+      </div>
+      <button id="close-interaction-modal" class="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700">
+        Close Modal
+      </button>
+    </div>
+  </div>
+\`;
+
+document.body.appendChild(modal);
+
+// Apply interaction prevention
+const modalContent = modal.querySelector('.modal-content');
+const cleanup = preventInteractionsOutsideOf(modalContent);
+
+console.log('Modal created with full interaction prevention');
+console.log('Try tabbing, scrolling page, or clicking outside - all blocked!');
+console.log('Only interactions within the modal are allowed');
+
+// Close modal functionality
+document.getElementById('close-interaction-modal').addEventListener('click', () => {
+  cleanup();
+  document.body.removeChild(modal);
+  console.log('Modal closed and all interactions restored');
+});
+
+// Auto-close after 20 seconds
+setTimeout(() => {
+  if (document.body.contains(modal)) {
+    cleanup();
+    document.body.removeChild(modal);
+    console.log('Modal auto-closed after 20 seconds');
+  }
+}, 20000);
+
+// Simplified implementation for demo
+function preventInteractionsOutsideOf(container, options = {}) {
+  const undoPreventFocusOut = preventFocusOut(container, options);
+  const undoPreventOverscroll = preventContainerOverscroll(container);
+
+  return () => {
+    undoPreventFocusOut();
+    undoPreventOverscroll();
+  };
+}
+
+function preventContainerOverscroll(container) {
+  if (!container?.addEventListener) {
+    console.warn('preventContainerOverscroll: Invalid container provided');
+    return () => {};
+  }
+
+  const onContainerWheel = (event) => {
+    const target = event.target;
+    
+    if (target !== container && 
+        container.contains(target) && 
+        isElementScrollable(target)) {
+      return preventOverscroll(event);
+    }
+    
+    if (container instanceof HTMLElement) {
+      container.scrollTop = 0;
+    }
+    event.preventDefault();
+  };
+
+  const BLOCKED_KEYS = ['PageUp', 'PageDown', 'End', 'Home', 'ArrowDown', 'ArrowUp'];
+  
+  const onContainerKeyDown = (event) => {
+    const target = event.target;
+    
+    if (target.tagName === 'TEXTAREA') {
+      return;
+    }
+    
+    if (BLOCKED_KEYS.includes(event.key)) {
+      if (container.contains(target)) {
+        event.stopPropagation();
+      } else {
+        event.preventDefault();
+      }
+    }
+  };
+
+  container.addEventListener('wheel', onContainerWheel, { passive: false });
+  container.addEventListener('keydown', onContainerKeyDown, { passive: false });
+
+  return () => {
+    container.removeEventListener('wheel', onContainerWheel);
+    container.removeEventListener('keydown', onContainerKeyDown);
+  };
+}
+
+function preventOverscroll(event) {
+  const target = event.target;
+  
+  if (!target || !isElementScrollable(target)) {
+    return;
+  }
+
+  const { deltaY } = event;
+  const { scrollTop, scrollHeight, clientHeight } = target;
+
+  if (deltaY < 0 && scrollTop <= 0) {
+    target.scrollTop = 0;
+    event.preventDefault();
+    return;
+  }
+
+  if (deltaY > 0 && (scrollTop + clientHeight) >= scrollHeight) {
+    target.scrollTop = scrollHeight - clientHeight;
+    event.preventDefault();
+  }
+}`,
+
+      queryFocusable: `// Create a test container with various elements
+const container = document.createElement('div');
+container.className = 'p-4 border border-gray-300 rounded-lg space-y-2';
+container.innerHTML = \`
+  <h3 class="font-semibold mb-2">Test Container</h3>
+  <input type="text" placeholder="Text input" class="block w-full p-2 border rounded">
+  <button class="bg-blue-500 text-white px-3 py-1 rounded">Button</button>
+  <a href="#" class="text-blue-600 underline block">Link</a>
+  <select class="block p-2 border rounded">
+    <option>Option 1</option>
+    <option>Option 2</option>
+  </select>
+  <textarea placeholder="Textarea" class="block w-full p-2 border rounded h-20"></textarea>
+  <div tabindex="0" class="p-2 bg-gray-100 rounded cursor-pointer">Focusable div</div>
+  <button disabled class="bg-gray-300 text-gray-500 px-3 py-1 rounded cursor-not-allowed">Disabled button</button>
+  <input type="hidden" value="hidden">
+  <div style="display: none;">Hidden div with <button>button</button></div>
+\`;
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(container);
+
+// Find focusable elements
+const focusableElements = queryFocusable(container);
+
+console.log('Container created with various elements');
+console.log('Found', focusableElements.length, 'focusable elements:');
+
+focusableElements.forEach((element, index) => {
+  console.log(\`\${index + 1}. \${element.tagName.toLowerCase()}\${element.type ? '[' + element.type + ']' : ''}\`);
+  
+  // Add visual indicator
+  element.style.outline = '2px solid #3b82f6';
+  element.style.outlineOffset = '2px';
+});
+
+// Add focus event listeners for demonstration
+focusableElements.forEach((element, index) => {
+  element.addEventListener('focus', () => {
+    console.log(\`Focused element \${index + 1}: \${element.tagName.toLowerCase()}\`);
+  });
+});
+
+function queryFocusable(element) {
+  const focusableSelectors = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(',');
+  
+  const nodeList = element.querySelectorAll(focusableSelectors);
+  
+  return Array.from(nodeList).filter(node => {
+    const style = window.getComputedStyle(node);
+    return (
+      style.display !== 'none' &&
+      style.visibility !== 'hidden' &&
+      node.tabIndex >= 0
+    );
+  });
+}`,
+
+      remainingScrollAreaShorterThanHeight: `// Create a scrollable container to test remaining scroll area
+const container = document.createElement('div');
+container.className = 'h-48 overflow-y-auto border border-gray-300 p-4 bg-gray-50';
+container.innerHTML = \`
+  <h3 class="font-semibold mb-2">Remaining Scroll Area Test</h3>
+  <p class="mb-2">Scroll down to see when remaining area becomes shorter than height!</p>
+  \${'<p class="mb-2">Content line</p>'.repeat(25)}
+  <p class="font-semibold text-green-600">🎉 You reached the end!</p>
+\`;
+
+const indicator = document.createElement('div');
+indicator.className = 'mt-2 p-3 bg-blue-100 rounded text-center font-medium';
+indicator.textContent = 'Remaining area is longer than height';
+
+const infoPanel = document.createElement('div');
+infoPanel.className = 'mt-2 p-3 bg-gray-100 rounded text-sm space-y-1';
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(container);
+document.getElementById('visual-output').appendChild(indicator);
+document.getElementById('visual-output').appendChild(infoPanel);
+
+// Add scroll listener to test in real-time
+container.addEventListener('scroll', () => {
+  const isShorter = remainingScrollAreaShorterThanHeight(container);
+  const { scrollHeight, clientHeight, scrollTop } = container;
+  const remainingArea = scrollHeight - clientHeight - scrollTop;
+  const percentage = Math.round((scrollTop / (scrollHeight - clientHeight)) * 100);
+  
+  indicator.textContent = \`Remaining area is \${isShorter ? 'SHORTER' : 'LONGER'} than height\`;
+  indicator.className = \`mt-2 p-3 rounded text-center font-medium \${
+    isShorter 
+      ? 'bg-green-100 text-green-800' 
+      : 'bg-blue-100 text-blue-800'
+  }\`;
+  
+  infoPanel.innerHTML = \`
+    <div><strong>Scroll Progress:</strong> \${percentage}%</div>
+    <div><strong>Element Height:</strong> \${clientHeight}px</div>
+    <div><strong>Remaining Scroll Area:</strong> \${remainingArea}px</div>
+    <div><strong>Is Shorter:</strong> \${isShorter ? 'Yes ✓' : 'No'}</div>
+  \`;
+  
+  console.log(\`Scroll: \${percentage}% - Remaining area shorter: \${isShorter} (\${remainingArea}px remaining)\`);
+});
+
+console.log('Scrollable container created');
+console.log('Scroll down to see when remaining area becomes shorter than element height');
+
+function remainingScrollAreaShorterThanHeight(element) {
+  if (!(element instanceof Element)) {
+    console.warn('remainingScrollAreaShorterThanHeight: Invalid element provided');
+    return false;
+  }
+
+  return (
+    element.scrollHeight -
+    element.clientHeight -
+    element.scrollTop <
+    element.clientHeight
+  );
+}`,
+
+      scrollIntoView: `// Create a container with multiple target elements
+const container = document.createElement('div');
+container.className = 'h-64 overflow-y-auto border border-gray-300 p-4 bg-gray-50';
+
+const content = \`
+  <h3 class="font-semibold mb-4">Scroll Into View Test</h3>
+  <p class="mb-4">Click the buttons below to scroll different elements into view:</p>
+  
+  \${'<p class="mb-2">Filler content</p>'.repeat(10)}
+  
+  <div id="target-1" class="p-4 bg-blue-100 border border-blue-300 rounded mb-4">
+    <h4 class="font-semibold text-blue-800">Target Element 1</h4>
+    <p class="text-blue-600">This is the first target element</p>
+  </div>
+  
+  \${'<p class="mb-2">More filler content</p>'.repeat(10)}
+  
+  <div id="target-2" class="p-4 bg-green-100 border border-green-300 rounded mb-4">
+    <h4 class="font-semibold text-green-800">Target Element 2</h4>
+    <p class="text-green-600">This is the second target element</p>
+  </div>
+  
+  \${'<p class="mb-2">Even more filler content</p>'.repeat(10)}
+  
+  <div id="target-3" class="p-4 bg-purple-100 border border-purple-300 rounded mb-4">
+    <h4 class="font-semibold text-purple-800">Target Element 3</h4>
+    <p class="text-purple-600">This is the third target element</p>
+  </div>
+  
+  \${'<p class="mb-2">Final filler content</p>'.repeat(5)}
+\`;
+
+container.innerHTML = content;
+
+const controls = document.createElement('div');
+controls.className = 'mt-4 space-x-2';
+
+const buttons = [
+  { text: 'Scroll to Top', target: null, offset: 0 },
+  { text: 'Scroll to Target 1', target: 'target-1', offset: 0 },
+  { text: 'Scroll to Target 2 (50px offset)', target: 'target-2', offset: 50 },
+  { text: 'Scroll to Target 3 (100px offset)', target: 'target-3', offset: 100 }
+];
+
+buttons.forEach(({ text, target, offset }) => {
+  const button = document.createElement('button');
+  button.className = 'bg-primary-600 text-white px-3 py-1 rounded text-sm hover:bg-primary-700 mr-2 mb-2';
+  button.textContent = text;
+  button.addEventListener('click', () => {
+    if (target) {
+      const element = document.getElementById(target);
+      if (element) {
+        scrollIntoView(element, offset);
+        console.log(\`Scrolling to \${target} with \${offset}px offset\`);
+      }
+    } else {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+      console.log('Scrolling to top');
+    }
+  });
+  controls.appendChild(button);
+});
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(container);
+document.getElementById('visual-output').appendChild(controls);
+
+console.log('Scrollable container with target elements created');
+console.log('Click the buttons to test scrollIntoView with different offsets');
+
+function getVerticalScrollParent(element) {
+  if (element === window || element === document) {
+    return element;
+  }
+
+  if (!(element instanceof Element)) {
+    return window;
+  }
+
+  const computedStyle = window.getComputedStyle(element);
+  const overflow = computedStyle.getPropertyValue('overflow');
+  
+  if (overflow === 'auto' || overflow === 'scroll') {
+    return element;
+  }
+  
+  const overflowY = computedStyle.getPropertyValue('overflow-y');
+  if (overflowY === 'auto' || overflowY === 'scroll') {
+    return element;
+  }
+  
+  return getVerticalScrollParent(element.parentElement || document.body);
+}
+
+function scrollIntoView(element, offset = 0) {
+  if (!(element instanceof Element)) {
+    console.warn('scrollIntoView: Invalid element provided');
+    return;
+  }
+
+  const offsetTop = element.offsetTop;
+  const scrollParent = getVerticalScrollParent(element);
+  
+  if (scrollParent instanceof Element || scrollParent === window) {
+    scrollParent.scrollTo({
+      top: offsetTop - offset,
+      behavior: 'smooth'
+    });
+  }
+}`,
+
+      selectNodeTextContents: `// Create elements with different types of text content
+const container = document.createElement('div');
+container.className = 'space-y-4';
+
+const elements = [
+  {
+    name: 'Code Block',
+    content: \`function example() {
+  console.log('Hello, World!');
+  return 'This is selectable code';
+}\`,
+    className: 'bg-gray-900 text-green-400 p-4 rounded font-mono text-sm'
+  },
+  {
+    name: 'Paragraph Text',
+    content: 'This is a paragraph with some text that can be selected. Click the button below to select all of this text automatically.',
+    className: 'bg-blue-50 p-4 rounded text-blue-800'
+  },
+  {
+    name: 'Mixed Content',
+    content: \`<strong>Bold text</strong>, <em>italic text</em>, and <code>inline code</code> can all be selected together.\`,
+    className: 'bg-green-50 p-4 rounded text-green-800'
+  }
+];
+
+elements.forEach(({ name, content, className }) => {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'border border-gray-300 rounded-lg p-4';
+  
+  const title = document.createElement('h4');
+  title.className = 'font-semibold mb-2';
+  title.textContent = name;
+  
+  const textElement = document.createElement('div');
+  textElement.className = className;
+  textElement.innerHTML = content;
+  
+  const button = document.createElement('button');
+  button.className = 'mt-2 bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700';
+  button.textContent = 'Select This Text';
+  button.addEventListener('click', () => {
+    selectNodeTextContents(textElement);
+    console.log(\`Selected text content from: \${name}\`);
+    
+    // Visual feedback
+    textElement.style.backgroundColor = '#fef3c7';
+    setTimeout(() => {
+      textElement.className = className;
+    }, 2000);
+  });
+  
+  wrapper.appendChild(title);
+  wrapper.appendChild(textElement);
+  wrapper.appendChild(button);
+  container.appendChild(wrapper);
+});
+
+// Add instructions
+const instructions = document.createElement('div');
+instructions.className = 'p-4 bg-yellow-50 border border-yellow-200 rounded-lg';
+instructions.innerHTML = \`
+  <h3 class="font-semibold text-yellow-800 mb-2">Instructions</h3>
+  <p class="text-yellow-700 text-sm">
+    Click "Select This Text" buttons to automatically select all text content within each element.
+    This is useful for code blocks, documentation, or any content users might want to copy.
+  </p>
+\`;
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(instructions);
+document.getElementById('visual-output').appendChild(container);
+
+console.log('Text selection demo created');
+console.log('Click "Select This Text" buttons to test automatic text selection');
+
+function selectNodeTextContents(node) {
+  if (!node) {
+    console.warn('selectNodeTextContents: No node provided');
+    return;
+  }
+
+  try {
+    if (window.getSelection) {
+      const selection = window.getSelection();
+      if (selection) {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    } else {
+      console.warn('selectNodeTextContents: Text selection not supported in this browser');
+    }
+  } catch (error) {
+    console.error('selectNodeTextContents: Failed to select text', error);
+  }
+}`,
+
+      submitParentForm: `// Create a form with various submit scenarios
+const formContainer = document.createElement('div');
+formContainer.className = 'space-y-6';
+
+// Form 1: Standard form with submit button
+const form1 = document.createElement('form');
+form1.className = 'p-4 border border-gray-300 rounded-lg bg-gray-50';
+form1.innerHTML = \`
+  <h4 class="font-semibold mb-3">Form 1: Standard Form</h4>
+  <div class="space-y-2">
+    <input type="text" name="name" placeholder="Your name" class="w-full p-2 border rounded">
+    <input type="email" name="email" placeholder="Your email" class="w-full p-2 border rounded">
+    <div class="flex space-x-2">
+      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Submit Form</button>
+      <button type="button" id="submit-parent-1" class="bg-blue-600 text-white px-4 py-2 rounded">
+        Submit via submitParentForm
+      </button>
+    </div>
+  </div>
+\`;
+
+// Form 2: Form without explicit submit button
+const form2 = document.createElement('form');
+form2.className = 'p-4 border border-gray-300 rounded-lg bg-blue-50';
+form2.innerHTML = \`
+  <h4 class="font-semibold mb-3">Form 2: No Submit Button</h4>
+  <div class="space-y-2">
+    <input type="text" name="username" placeholder="Username" class="w-full p-2 border rounded">
+    <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded">
+    <button type="button" id="submit-parent-2" class="bg-purple-600 text-white px-4 py-2 rounded">
+      Submit via submitParentForm
+    </button>
+  </div>
+\`;
+
+// Form 3: Nested elements
+const form3 = document.createElement('form');
+form3.className = 'p-4 border border-gray-300 rounded-lg bg-green-50';
+form3.innerHTML = \`
+  <h4 class="font-semibold mb-3">Form 3: Nested Elements</h4>
+  <div class="space-y-2">
+    <input type="text" name="title" placeholder="Title" class="w-full p-2 border rounded">
+    <textarea name="content" placeholder="Content" class="w-full p-2 border rounded h-20"></textarea>
+    <div class="nested-container p-2 border rounded bg-white">
+      <p class="text-sm text-gray-600 mb-2">Nested container:</p>
+      <button type="button" id="submit-parent-3" class="bg-orange-600 text-white px-4 py-2 rounded">
+        Submit from Nested Element
+      </button>
+    </div>
+  </div>
+\`;
+
+// Results display
+const results = document.createElement('div');
+results.className = 'p-4 bg-gray-100 rounded-lg';
+results.innerHTML = \`
+  <h4 class="font-semibold mb-2">Form Submission Results</h4>
+  <div id="form-results" class="text-sm font-mono bg-white p-3 rounded border">
+    No submissions yet...
+  </div>
+\`;
+
+formContainer.appendChild(form1);
+formContainer.appendChild(form2);
+formContainer.appendChild(form3);
+formContainer.appendChild(results);
+
+document.getElementById('visual-output').innerHTML = '';
+document.getElementById('visual-output').appendChild(formContainer);
+
+// Add form submit listeners
+[form1, form2, form3].forEach((form, index) => {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    const message = \`Form \${index + 1} submitted with data: \${JSON.stringify(data)}\`;
+    console.log(message);
+    
+    const resultsDiv = document.getElementById('form-results');
+    resultsDiv.innerHTML += \`<div>[\${new Date().toLocaleTimeString()}] \${message}</div>\`;
+    resultsDiv.scrollTop = resultsDiv.scrollHeight;
+  });
+});
+
+// Add click handlers for submitParentForm buttons
+document.getElementById('submit-parent-1').addEventListener('click', (e) => {
+  console.log('Calling submitParentForm on button in Form 1');
+  submitParentForm(e.target);
+});
+
+document.getElementById('submit-parent-2').addEventListener('click', (e) => {
+  console.log('Calling submitParentForm on button in Form 2');
+  submitParentForm(e.target);
+});
+
+document.getElementById('submit-parent-3').addEventListener('click', (e) => {
+  console.log('Calling submitParentForm on nested button in Form 3');
+  submitParentForm(e.target);
+});
+
+console.log('Forms created with submitParentForm test buttons');
+console.log('Try both regular submit buttons and submitParentForm buttons');
+
+function submitParentForm(element) {
+  if (!(element instanceof HTMLElement)) {
+    console.warn('submitParentForm: Invalid element provided');
+    return;
+  }
+
+  const form = element.form || element.closest('form');
+  
+  if (!form) {
+    console.warn('submitParentForm: No parent form found for element', element);
+    return;
+  }
+
+  try {
+    if (form.requestSubmit) {
+      form.requestSubmit();
+    } else {
+      const submitButton = form.querySelector('input[type="submit"], button[type="submit"]');
+      if (submitButton) {
+        submitButton.click();
+      } else {
+        form.submit();
+      }
+    }
+  } catch (error) {
+    console.error('submitParentForm: Failed to submit form', error);
+  }
 }`
     };
 
@@ -452,6 +1734,7 @@ function isElementScrollable(element) {
         // Capture console output
         const originalLog = console.log;
         const originalError = console.error;
+        const originalWarn = console.warn;
         
         console.log = (...args) => {
           appendToConsole(args.join(' '), 'log');
@@ -461,6 +1744,11 @@ function isElementScrollable(element) {
         console.error = (...args) => {
           appendToConsole(args.join(' '), 'error');
           originalError.apply(console, args);
+        };
+
+        console.warn = (...args) => {
+          appendToConsole(args.join(' '), 'warn');
+          originalWarn.apply(console, args);
         };
 
         try {
@@ -473,6 +1761,7 @@ function isElementScrollable(element) {
         // Restore console
         console.log = originalLog;
         console.error = originalError;
+        console.warn = originalWarn;
       });
 
       // Reset
@@ -482,6 +1771,13 @@ function isElementScrollable(element) {
         selectedUtility = '';
         runBtn.disabled = true;
         clearOutput();
+        
+        // Clean up any modals or fixed elements
+        document.querySelectorAll('.fixed').forEach(el => {
+          if (el.style.zIndex === '50' || el.style.zIndex === '1000') {
+            el.remove();
+          }
+        });
       });
 
       // Copy code
@@ -528,7 +1824,8 @@ function isElementScrollable(element) {
         }
         
         const line = document.createElement('div');
-        line.className = type === 'error' ? 'text-red-400' : 'text-green-400';
+        line.className = type === 'error' ? 'text-red-400' : 
+                        type === 'warn' ? 'text-yellow-400' : 'text-green-400';
         line.textContent = message;
         consoleOutput.appendChild(line);
         consoleOutput.scrollTop = consoleOutput.scrollHeight;

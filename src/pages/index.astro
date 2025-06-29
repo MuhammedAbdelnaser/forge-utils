@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, Copy, Check } from 'lucide-react';
+import { dataURItoFile } from '../utils/file-handling/dataURItoFile';
 ---
 
 <Layout title="forge-utils - Own Your Utility Code">
@@ -322,6 +323,15 @@ formData.append('file', file);</code></pre>
           }
         });
       });
+
+      // Test the dataURItoFile function to ensure it works
+      try {
+        const testDataURI = 'data:text/plain;base64,SGVsbG8gV29ybGQ=';
+        const testFile = dataURItoFile(testDataURI, 'test.txt');
+        console.log('dataURItoFile test successful:', testFile.name, testFile.type);
+      } catch (error) {
+        console.error('dataURItoFile test failed:', error);
+      }
     });
   </script>
 </Layout>

@@ -46,76 +46,7 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
-      typography: {
-        DEFAULT: {
-          css: {
-            maxWidth: 'none',
-            color: 'inherit',
-            a: {
-              color: 'inherit',
-              textDecoration: 'none',
-              fontWeight: '500',
-            },
-            '[class~="lead"]': {
-              color: 'inherit',
-            },
-            strong: {
-              color: 'inherit',
-            },
-            'ol > li::before': {
-              color: 'inherit',
-            },
-            'ul > li::before': {
-              backgroundColor: 'currentColor',
-            },
-            hr: {
-              borderColor: 'currentColor',
-              opacity: 0.1,
-            },
-            blockquote: {
-              color: 'inherit',
-              borderLeftColor: 'currentColor',
-              opacity: 0.8,
-            },
-            h1: {
-              color: 'inherit',
-            },
-            h2: {
-              color: 'inherit',
-            },
-            h3: {
-              color: 'inherit',
-            },
-            h4: {
-              color: 'inherit',
-            },
-            'figure figcaption': {
-              color: 'inherit',
-            },
-            code: {
-              color: 'inherit',
-            },
-            'a code': {
-              color: 'inherit',
-            },
-            pre: {
-              color: 'inherit',
-              backgroundColor: 'transparent',
-            },
-            thead: {
-              color: 'inherit',
-              borderBottomColor: 'currentColor',
-            },
-            'tbody tr': {
-              borderBottomColor: 'currentColor',
-              opacity: 0.1,
-            },
-          },
-        },
-      },
     },
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [],
 }

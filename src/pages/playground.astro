@@ -504,7 +504,7 @@ function isElementScrollable(element) {
       installBtn.addEventListener('click', async () => {
         if (!selectedUtility) return;
         
-        const command = \`forge-utils add \${selectedUtility}\`;
+        const command = `forge-utils add ${selectedUtility}`;
         try {
           await navigator.clipboard.writeText(command);
           const originalText = installBtn.innerHTML;

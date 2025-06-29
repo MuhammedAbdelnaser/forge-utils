@@ -35,8 +35,11 @@ export async function add(utilityNames: string[], options: AddOptions = {}) {
 
     const registry = await loadRegistry();
     const results: InstallationResult[] = [];
+
+    const expandedUtilityNames = await expandCategoryNames(registry, utilityNames);
     
-    const { valid, invalid, suggestions } = await validateUtilities(registry, utilityNames);
+    
+    const { valid, invalid, suggestions } = await validateUtilities(registry, expandedUtilityNames);
     
     if (invalid.length > 0) {
       console.error(chalk.red(`❌ Unknown utilities: ${chalk.bold(invalid.join(', '))}`));
@@ -91,6 +94,38 @@ export async function add(utilityNames: string[], options: AddOptions = {}) {
     console.error(chalk.gray(error instanceof Error ? error.message : String(error)));
     process.exit(1);
   }
+}
+
+async function expandCategoryNames(registry: any, utilityNames: string[]): Promise<string[]> {
+  const expanded: string[] = [];
+  if (utilityNames.length === 0) {
+    console.log(chalk.yellow('⚠️ No utilities specified, listing all available categories'));
+    return registry.utilities.map((u: UtilityMeta) => u.category);
+  }
+  console.log(chalk.blue.bold('🔍 Expanding utility names...'));
+  console.log(chalk.gray(`   Input utilities: ${utilityNames.join(', ')}`));
+  console.log();
+
+  const categories = [...new Set(registry.utilities.map((u: UtilityMeta) => u.category))];
+  
+  for (const name of utilityNames) {
+    if (categories.includes(name)) {
+      console.log(chalk.blue(`📂 Expanding category: ${chalk.bold(name)}`));
+
+      const categoryUtilities = registry.utilities
+        .filter((u: UtilityMeta) => u.category === name)
+        .map((u: UtilityMeta) => u.name);
+      
+      console.log(chalk.gray(`   Found ${categoryUtilities.length} utilities: ${categoryUtilities.join(', ')}`));
+      console.log();
+      
+      expanded.push(...categoryUtilities);
+    } else {
+      expanded.push(name);
+    }
+  }
+  
+  return expanded;
 }
 
 async function resolveDependencies(

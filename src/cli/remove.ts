@@ -26,7 +26,7 @@ export async function remove(utilityNames: string[]) {
       return;
     }
 
-    const { valid, invalid, notInstalled } = await validateRemovalTargets(registry, utilityNames);
+    const { valid, invalid, notInstalled } = await validateRemovalTargets(registry, utilityNames, config);
     
     if (invalid.length > 0) {
       console.error(chalk.red(`❌ Unknown utilities: ${chalk.bold(invalid.join(', '))}`));
@@ -68,7 +68,12 @@ export async function remove(utilityNames: string[]) {
   }
 }
 
-async function validateRemovalTargets(registry: any, utilityNames: string[]): Promise<{
+// Updated function signature to include config parameter
+async function validateRemovalTargets(
+  registry: any, 
+  utilityNames: string[], 
+  config: ProjectConfig
+): Promise<{
   valid: string[];
   invalid: string[];
   notInstalled: string[];
@@ -85,7 +90,8 @@ async function validateRemovalTargets(registry: any, utilityNames: string[]): Pr
       continue;
     }
 
-    const installed = await isUtilityInstalled(name);
+    // Use improved utility installation check
+    const installed = await isUtilityInstalledImproved(utility, config);
     if (!installed) {
       notInstalled.push(name);
       continue;
@@ -95,6 +101,26 @@ async function validateRemovalTargets(registry: any, utilityNames: string[]): Pr
   }
 
   return { valid, invalid, notInstalled };
+}
+
+// Improved utility installation check that handles file extensions properly
+async function isUtilityInstalledImproved(utility: UtilityMeta, config: ProjectConfig): Promise<boolean> {
+  try {
+    // Generate both possible file names (TypeScript and JavaScript)
+    const tsFileName = utility.file.replace(/\.js$/, '.ts');
+    const jsFileName = utility.file.replace(/\.ts$/, '.js');
+    
+    const tsFilePath = path.join(config.rootPath, config.directory, tsFileName);
+    const jsFilePath = path.join(config.rootPath, config.directory, jsFileName);
+    
+    // Check if either TypeScript or JavaScript version exists
+    const tsExists = await fs.pathExists(tsFilePath);
+    const jsExists = await fs.pathExists(jsFilePath);
+    
+    return tsExists || jsExists;
+  } catch (error) {
+    return false;
+  }
 }
 
 interface ProjectConfig {
@@ -136,13 +162,23 @@ async function removeUtility(
   config: ProjectConfig
 ): Promise<RemovalResult> {
   try {
-    const fileName = config.typescript 
-      ? utility.file.replace(/\.js$/, '.ts')
-      : utility.file.replace(/\.ts$/, '.js');
+    // Check for both TypeScript and JavaScript versions
+    const tsFileName = utility.file.replace(/\.js$/, '.ts');
+    const jsFileName = utility.file.replace(/\.ts$/, '.js');
     
-    const targetFile = path.join(config.rootPath, config.directory, fileName);
+    const tsFilePath = path.join(config.rootPath, config.directory, tsFileName);
+    const jsFilePath = path.join(config.rootPath, config.directory, jsFileName);
+    
+    let targetFile: string | null = null;
+    
+    // Determine which file actually exists
+    if (await fs.pathExists(tsFilePath)) {
+      targetFile = tsFilePath;
+    } else if (await fs.pathExists(jsFilePath)) {
+      targetFile = jsFilePath;
+    }
 
-    if (!await fs.pathExists(targetFile)) {
+    if (!targetFile) {
       return {
         utility,
         status: 'not_installed',
@@ -152,6 +188,7 @@ async function removeUtility(
 
     await fs.remove(targetFile);
 
+    // Clean up empty category directory
     const categoryDir = path.join(config.rootPath, config.directory, utility.category);
     if (await fs.pathExists(categoryDir)) {
       const files = await fs.readdir(categoryDir);
@@ -178,33 +215,63 @@ async function removeUtility(
 async function checkOrphanedDependencies(registry: any, config: ProjectConfig): Promise<void> {
   try {
     const installedUtilities = await getInstalledUtilities();
-    const allDependencies = new Set<string>();
-    const usedDependencies = new Set<string>();
+    const stillUsedDependencies = new Set<string>();
 
-    registry.utilities.forEach((utility: UtilityMeta) => {
-      if (utility.dependencies) {
-        utility.dependencies.forEach(dep => allDependencies.add(dep));
-      }
-    });
-
+    // Collect all dependencies that are still being used by remaining installed utilities
     for (const installedName of installedUtilities) {
       const utility = findUtility(registry, installedName);
       if (utility?.dependencies) {
-        utility.dependencies.forEach(dep => usedDependencies.add(dep));
+        utility.dependencies.forEach(dep => stillUsedDependencies.add(dep));
       }
     }
 
-    const orphanedDeps = Array.from(allDependencies).filter(dep => !usedDependencies.has(dep));
+    // Find installed utilities that are no longer needed as dependencies
+    const orphanedDependencies: string[] = [];
+    
+    for (const installedName of installedUtilities) {
+      const utility = findUtility(registry, installedName);
+      if (utility) {
+        // Check if this utility is a dependency that's no longer needed
+        const isStillUsedAsDependency = stillUsedDependencies.has(installedName);
+        const isDirectlyInstalled = installedUtilities.includes(installedName);
+        
+        // If it's not used as a dependency and was only installed as a dependency
+        // (this would require tracking installation history, but for now we'll just suggest cleanup)
+        if (!isStillUsedAsDependency) {
+          // Check if any OTHER utilities depend on this one
+          const isDependencyOfOthers = registry.utilities.some((otherUtility: UtilityMeta) => 
+            otherUtility.name !== installedName && 
+            otherUtility.dependencies?.includes(installedName) &&
+            installedUtilities.includes(otherUtility.name)
+          );
+          
+          if (!isDependencyOfOthers) {
+            const potentialOrphan = installedName;
 
-    if (orphanedDeps.length > 0) {
+            const hasInstalledDependencies = utility.dependencies?.some(dep => 
+              installedUtilities.includes(dep)
+            );
+
+            if (hasInstalledDependencies || utility.category === 'internal' || utility.name.includes('helper')) {
+              orphanedDependencies.push(potentialOrphan);
+            }
+          }
+        }
+      }
+    }
+
+    if (orphanedDependencies.length > 0) {
       console.log();
-      console.log(chalk.yellow('🧹 Orphaned dependencies detected:'));
-      orphanedDeps.forEach(dep => {
-        console.log(`   • ${chalk.gray(dep)}`);
+      console.log(chalk.yellow('🧹 Potentially orphaned utilities detected:'));
+      orphanedDependencies.forEach(dep => {
+        const utility = findUtility(registry, dep);
+        console.log(`   • ${chalk.gray(dep)} ${chalk.dim(`(${utility?.category || 'unknown'})`)}`);
       });
-      console.log(chalk.gray('💡 Consider removing them with: npm uninstall ' + orphanedDeps.join(' ')));
+      console.log(chalk.gray('💡 These utilities might no longer be needed. Review and remove manually if unused:'));
+      console.log(chalk.gray(`   forge-utils remove ${orphanedDependencies.join(' ')}`));
     }
   } catch (error) {
+    // Silently handle error - orphan detection is not critical
   }
 }
 
@@ -298,11 +365,20 @@ export async function cleanEmptyDirectories(config: ProjectConfig): Promise<void
       }
     }
   } catch (error) {
+    console.error(chalk.red('❌ Error cleaning empty directories:'));
+    console.error(chalk.gray(error instanceof Error ? error.message : String(error)));
   }
 }
 
 export async function removeInteractive(utilityNames: string[]): Promise<void> {
   const registry = await loadRegistry();
+  const config = await getProjectConfig();
+  
+  if (!config) {
+    console.error(chalk.red('❌ forge-utils not initialized in this project'));
+    return;
+  }
+
   const toRemove: string[] = [];
 
   for (const name of utilityNames) {
@@ -312,7 +388,7 @@ export async function removeInteractive(utilityNames: string[]): Promise<void> {
       continue;
     }
 
-    const installed = await isUtilityInstalled(name);
+    const installed = await isUtilityInstalledImproved(utility, config);
     if (!installed) {
       console.log(chalk.yellow(`⚠️  ${name} is not installed`));
       continue;

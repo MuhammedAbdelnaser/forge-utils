@@ -3,7 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, Copy, Check } from 'lucide-react';
-import { dataURItoFile } from '../utils/file-handling/dataURItoFile';
 ---
 
 <Layout title="forge-utils - Own Your Utility Code">
@@ -299,6 +298,22 @@ formData.append('file', file);</code></pre>
   <Footer />
 
   <script>
+    // Define dataURItoFile function for client-side use
+    function dataURItoFile(dataURI, filename) {
+      // Split the data URI to get the mime type and data
+      const arr = dataURI.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      
+      return new File([u8arr], filename, { type: mime });
+    }
+
     // Copy to clipboard functionality
     document.addEventListener('DOMContentLoaded', () => {
       const copyButtons = document.querySelectorAll('.copy-btn');

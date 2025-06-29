@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import { Play, Code, Download, RefreshCw } from 'lucide-react';
 ---
 
-<Layout title="Playground - forge-utils">
+<Layout title="Playground - own-kit">
   <Header />
   
   <main class="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -16,7 +16,7 @@ import { Play, Code, Download, RefreshCw } from 'lucide-react';
           Interactive Playground
         </h1>
         <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-          Test and experiment with forge-utils functions in real-time. 
+          Test and experiment with own-kit functions in real-time. 
           Try different utilities, modify parameters, and see the results instantly.
         </p>
       </div>
@@ -504,7 +504,7 @@ function isElementScrollable(element) {
       installBtn.addEventListener('click', async () => {
         if (!selectedUtility) return;
         
-        const command = `forge-utils add ${selectedUtility}`;
+        const command = `own-kit add ${selectedUtility}`;
         try {
           await navigator.clipboard.writeText(command);
           const originalText = installBtn.innerHTML;

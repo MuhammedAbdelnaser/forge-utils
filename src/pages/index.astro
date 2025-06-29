@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, Copy, Check } from 'lucide-react';
 ---
 
-<Layout title="forge-utils - Own Your Utility Code">
+<Layout title="own-kit - Own Your Utility Code">
   <Header />
   
   <main>
@@ -25,7 +25,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
           
           <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
             A modern utility toolkit designed for maximum ownership, modularity, and clarity. 
-            Instead of installing opaque dependencies, forge-utils helps you 
+            Instead of installing opaque dependencies, own-kit helps you 
             <strong class="text-gray-900 dark:text-white">copy clean, well-documented utilities directly into your codebase</strong>—so you're in charge.
           </p>
           
@@ -54,13 +54,13 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
               <span class="text-gray-400 text-sm font-medium">Quick Install</span>
               <button 
                 class="copy-btn p-2 text-gray-400 hover:text-white transition-colors rounded"
-                data-copy="npm install -g forge-utils"
+                data-copy="npm install -g own-kit"
               >
                 <Copy className="h-4 w-4 copy-icon" />
                 <Check className="h-4 w-4 check-icon hidden text-green-400" />
               </button>
             </div>
-            <code class="text-green-400 font-mono text-lg">npm install -g forge-utils</code>
+            <code class="text-green-400 font-mono text-lg">npm install -g own-kit</code>
           </div>
         </div>
       </div>
@@ -71,10 +71,10 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
           <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Why forge-utils?
+            Why own-kit?
           </h2>
           <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            forge-utils is not a typical utility library. It's a <strong>code injection toolkit</strong> 
+            own-kit is not a typical utility library. It's a <strong>code injection toolkit</strong> 
             that integrates curated utilities into your codebase, giving you <strong>100% control</strong> and <strong>zero coupling</strong>.
           </p>
         </div>
@@ -145,7 +145,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
               🚀 CLI-Driven UX
             </h3>
             <p class="text-gray-600 dark:text-gray-300">
-              Install, list, or remove utilities in seconds with the simple forge-utils CLI. 
+              Install, list, or remove utilities in seconds with the simple own-kit CLI. 
               Streamlined workflow for maximum productivity.
             </p>
           </div>
@@ -175,7 +175,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
             Quick Start
           </h2>
           <p class="text-xl text-gray-600 dark:text-gray-300">
-            Get up and running with forge-utils in minutes
+            Get up and running with own-kit in minutes
           </p>
         </div>
 
@@ -192,7 +192,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
                     Install globally
                   </h3>
                   <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
-                    <code class="text-green-400 font-mono">npm install -g forge-utils</code>
+                    <code class="text-green-400 font-mono">npm install -g own-kit</code>
                   </div>
                 </div>
               </div>
@@ -206,7 +206,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
                     Initialize in your project
                   </h3>
                   <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
-                    <code class="text-green-400 font-mono">forge-utils init --typescript</code>
+                    <code class="text-green-400 font-mono">own-kit init --typescript</code>
                   </div>
                 </div>
               </div>
@@ -220,7 +220,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
                     Add utilities
                   </h3>
                   <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
-                    <code class="text-green-400 font-mono">forge-utils add dataURItoFile</code>
+                    <code class="text-green-400 font-mono">own-kit add dataURItoFile</code>
                   </div>
                 </div>
               </div>
@@ -235,7 +235,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
                   </h3>
                   <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4">
                     <code class="text-green-400 font-mono text-sm">
-                      import { dataURItoFile } from './lib/utils'
+                      import { dataURItoFile } from './src/utils/file-handling/dataURItoFile'
                     </code>
                   </div>
                 </div>
@@ -248,7 +248,7 @@ import { Code2, Download, Zap, Shield, Wrench, BookOpen, ArrowRight, Terminal, C
                 Example Usage
               </h3>
               <pre class="language-typescript text-sm overflow-x-auto"><code class="language-typescript">// After adding the utility
-import { dataURItoFile } from './lib/utils';
+import { dataURItoFile } from './src/utils/file-handling/dataURItoFile';
 
 // Convert data URI to File
 const dataURI = 'data:text/plain;base64,SGVsbG8gV29ybGQ=';

@@ -33,7 +33,7 @@ if (!utilityInfo || !categoryInfo) {
 const utilityCode = getUtilityContent(utilityInfo.name);
 ---
 
-<Layout title={`${utilityInfo.name} - ${categoryInfo.name} - forge-utils`}>
+<Layout title={`${utilityInfo.name} - ${categoryInfo.name} - own-kit`}>
   <Header />
   
   <main class="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -83,7 +83,7 @@ const utilityCode = getUtilityContent(utilityInfo.name);
             <div class="flex flex-wrap gap-3">
               <button 
                 class="copy-install-btn inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
-                data-copy={`forge-utils add ${utilityInfo.name}`}
+                data-copy={`own-kit add ${utilityInfo.name}`}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Install Utility
@@ -168,7 +168,7 @@ const utilityCode = getUtilityContent(utilityInfo.name);
                     Basic Usage
                   </h3>
                   <CodeBlock 
-                    code={`import { ${utilityInfo.name} } from './lib/utils/${utilityInfo.category}/${utilityInfo.name}';
+                    code={`import { ${utilityInfo.name} } from './src/utils/${utilityInfo.category}/${utilityInfo.name}';
 
 // Example usage will be shown here based on the utility
 // This is a placeholder for demonstration`}
@@ -205,10 +205,10 @@ const utilityCode = getUtilityContent(utilityInfo.name);
               <div class="space-y-4">
                 <div>
                   <h3 class="font-medium text-gray-900 dark:text-white mb-2">
-                    Using forge-utils CLI (Recommended)
+                    Using own-kit CLI (Recommended)
                   </h3>
                   <CodeBlock 
-                    code={`forge-utils add ${utilityInfo.name}`}
+                    code={`own-kit add ${utilityInfo.name}`}
                     language="bash"
                     client:load
                   />
